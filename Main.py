@@ -4,7 +4,7 @@ from tkinter import ttk
 
 Storage_Type = ['Tote', 'Gaylord', 'Other']
 Store_Number = ['224', '118']
-def main():
+def warehouse_worker():
     def done():
 
         return
@@ -27,10 +27,22 @@ def main():
     store.config(bg="#ffffff")
     store.pack()   #place(x=20,y=45)
 
+
+    # Button for done
+    # Button for another page of items
     ttk.Button(win, text= "Confirm",width= 20, command= done).pack(side = BOTTOM, pady = 10)
 
     win.mainloop()
     return
 
-main()
+warehouse_worker()
 time.sleep(100)
+def processor():
+
+
+    return
+
+def generate_excel_file():
+
+
+    return
