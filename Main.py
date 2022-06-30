@@ -1,7 +1,7 @@
 from datetime import datetime
 from tkinter import *
 from tkinter import ttk
-
+from tkinter.ttk import Button
 worker_post = {
     'Storage_Type': '',
     'Date_Received': '',
@@ -27,11 +27,16 @@ Store_Number = ['224', '118']
 contents_list = ['Jewelry', 'Collectables', 'Books', 'Media']
 def warehouse_worker():
     def done():
-
+        exit()
+        ##
+        # MongoDB stuff Goes here
+        ##
         return
+
+
     win= Tk()
     win.title("Warehouse Management")
-    win.geometry("800x500")
+    win.geometry("950x200")
 
     MainLable=Label(win, text="Received Information", font=("Courier 22 bold"))
     MainLable.pack()
@@ -60,18 +65,13 @@ def warehouse_worker():
     problemsent.focus_set()
     problemsent.place(x=475,y=50)
 
-    # text_box = Text(
-    #     win,
-    #     height=4,
-    #     width=20
-    # )
-    # text_box.pack(expand=True)
-
 
     # Button for done
-    # Button for another page of items
-    ttk.Button(win, text= "Confirm",width= 20, command= done).pack(side = BOTTOM, pady = 10)
+    # Button to add another item
 
+    ttk.Button(win, text= "Done",width= 20, command= done).pack(side = BOTTOM, pady = 10)
+    button = Button(win, text="Add", command=lambda: [ win.destroy(),warehouse_worker()])
+    button.pack(side = BOTTOM, pady = 10)
     win.mainloop()
     return
 
