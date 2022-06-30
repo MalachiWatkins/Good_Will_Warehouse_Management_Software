@@ -27,10 +27,12 @@ Store_Number = ['224', '118']
 contents_list = ['Jewelry', 'Collectables', 'Books', 'Media']
 def warehouse_worker():
     def done():
-        exit()
+
         ##
         # MongoDB stuff Goes here
         ##
+        # Insted of exit create a gui showing complete
+        exit()
         return
 
 
@@ -75,8 +77,7 @@ def warehouse_worker():
     win.mainloop()
     return
 
-warehouse_worker()
-time.sleep(100)
+
 def processor():
 
 
@@ -86,3 +87,5 @@ def generate_excel_file():
 
 
     return
+warehouse_worker()
+time.sleep(100)
