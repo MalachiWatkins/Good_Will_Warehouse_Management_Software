@@ -4,8 +4,12 @@ from tkinter import ttk
 from tkinter.ttk import Button
 import time
 from datetime import date
+from tkinter import messagebox
+from pymongo import MongoClient
+import pymongo
 
-
+warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
+receiverCollection = warehouse_db["receiver"]
 
 processor_post = {
     'Storage_Type': '',
@@ -28,7 +32,8 @@ def warehouse_worker():
     global problemsent
     global quantent
 
-    def done():
+    def add():
+
         today = date.today()
         date_format = today.strftime("%B %d, %Y")
         receiver_post = {
@@ -40,13 +45,14 @@ def warehouse_worker():
             'Problems': problemsent.get(),
 
         }
-        print(receiver_post)
-        time.sleep(100)
+        if storageVar.get() != "Storage Type":
+            receiverCollection.insert_one(receiver_post)
+            print(receiver_post)
+            messagebox.showinfo("showinfo", "Data Submitted")
         ##
         # MongoDB stuff Goes here
         ##
         # Insted of exit create a gui showing complete
-        exit()
         return
 
 
@@ -79,7 +85,7 @@ def warehouse_worker():
     contentsVar.set('Contents') # Def Value
     contents = OptionMenu(win, contentsVar, *contents_list)
     contents.config(bg="#ffffff")
-    contents.place(x=380,y=45)
+    contents.place(x=370,y=45)
 
     problems=Label(win, text="Problems:", font=("Courier 14 bold"))
     problems.place(x=480,y=45)
@@ -87,10 +93,12 @@ def warehouse_worker():
     problemsent.focus_set()
     problemsent.place(x=580,y=50)
 
-
-    ttk.Button(win, text= "Done",width= 20, command= done).pack(side = BOTTOM, pady = 10)
-    button = Button(win, text="Add", command=lambda: [ win.destroy(),warehouse_worker()])
+    button = Button(win, text="Done", command=lambda: [add(), win.destroy()])
     button.pack(side = BOTTOM, pady = 10)
+
+    button1 = Button(win, text="Add", command=lambda: [ add(), win.destroy(), warehouse_worker()])
+    button1.pack(side = BOTTOM, pady = 10)
+
 
     win.mainloop()
     return
