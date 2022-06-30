@@ -2,12 +2,14 @@ from datetime import datetime
 from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Button
+import time
+from datetime import date
+
+
 worker_post = {
     'Storage_Type': '',
     'Date_Received': '',
-    'Store_Number': '',
-    'Contents': '',
-    'Problems': '',
+
 
 }
 
@@ -26,8 +28,26 @@ Storage_Type = ['Tote', 'Gaylord', 'Other']
 Store_Number = ['224', '118']
 contents_list = ['Jewelry', 'Collectables', 'Books', 'Media']
 def warehouse_worker():
-    def done():
+    global storageVar
+    global storeVar
+    global contentsVar
+    global problemsent
+    global quantent
 
+    def done():
+        today = date.today()
+        date_format = today.strftime("%B %d, %Y")
+        receiver_post = {
+            'Quantity': quantent.get(),
+            'Storage_Type': storageVar.get(),
+            'Date_Received': date_format,
+            'Store_Number': storeVar.get(),
+            'Contents': contentsVar.get(),
+            'Problems': problemsent.get(),
+
+        }
+        print(receiver_post)
+        time.sleep(100)
         ##
         # MongoDB stuff Goes here
         ##
@@ -42,6 +62,12 @@ def warehouse_worker():
 
     MainLable=Label(win, text="Received Information", font=("Courier 22 bold"))
     MainLable.pack()
+
+    quant=Label(win, text="Quantity:", font=("Courier 14 bold"))
+    quant.place(x=0,y=45)
+    quantent= Entry(win, width= 2)
+    quantent.focus_set()
+    quantent.place(x=0,y=50)
 
     storageVar = StringVar(win)
     storageVar.set('Storage Type') # Def Value
@@ -71,11 +97,14 @@ def warehouse_worker():
     ttk.Button(win, text= "Done",width= 20, command= done).pack(side = BOTTOM, pady = 10)
     button = Button(win, text="Add", command=lambda: [ win.destroy(),warehouse_worker()])
     button.pack(side = BOTTOM, pady = 10)
+
     win.mainloop()
     return
 
 def processor():
-
+    ##
+    # MongoDB STUFF GOES HERE
+    ##
     return
 
 def main():
