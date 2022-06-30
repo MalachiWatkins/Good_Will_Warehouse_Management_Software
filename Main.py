@@ -68,18 +68,31 @@ def warehouse_worker():
     problemsent.place(x=475,y=50)
 
 
-    # Button for done
-    # Button to add another item
-
     ttk.Button(win, text= "Done",width= 20, command= done).pack(side = BOTTOM, pady = 10)
     button = Button(win, text="Add", command=lambda: [ win.destroy(),warehouse_worker()])
     button.pack(side = BOTTOM, pady = 10)
     win.mainloop()
     return
 
-
 def processor():
 
+    return
+
+def main():
+    win= Tk()
+    win.title("Warehouse Management")
+    win.geometry("950x200")
+
+    MainLable=Label(win, text="Warehouse Management ", font=("Courier 22 bold"))
+    MainLable.pack()
+
+
+    button1 = Button(win, text="Receiving", command=lambda: [ win.destroy(),warehouse_worker()])
+    button1.pack(side = BOTTOM, pady = 10)
+
+    button = Button(win, text="Processor", command=lambda: [ win.destroy(),processor()])
+    button.pack(side = BOTTOM, pady = 10)
+    win.mainloop()
 
     return
 
@@ -87,5 +100,6 @@ def generate_excel_file():
 
 
     return
-warehouse_worker()
+
+main()
 time.sleep(100)
