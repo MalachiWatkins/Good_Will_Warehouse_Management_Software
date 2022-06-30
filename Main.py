@@ -2,6 +2,7 @@ from datetime import datetime
 from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Button
+from tkcalendar import Calendar
 import time
 from datetime import date
 from tkinter import messagebox
@@ -21,10 +22,13 @@ processor_post = {
     'Problems': '',
 
 }
-
+today = date.today()
+date_format = today.strftime("%m/%d/%Y")
+# Finish List
 Storage_Type = ['Tote', 'Gaylord', 'Other']
 Store_Number = ['224', '118']
 contents_list = ['Jewelry', 'Collectables', 'Books', 'Media']
+######### DONE ###########
 def warehouse_worker():
     global storageVar
     global storeVar
@@ -34,8 +38,7 @@ def warehouse_worker():
 
     def add():
 
-        today = date.today()
-        date_format = today.strftime("%B %d, %Y")
+
         receiver_post = {
             'Quantity': quantent.get(),
             'Storage_Type': storageVar.get(),
@@ -49,10 +52,8 @@ def warehouse_worker():
             receiverCollection.insert_one(receiver_post)
             print(receiver_post)
             messagebox.showinfo("showinfo", "Data Submitted")
-        ##
-        # MongoDB stuff Goes here
-        ##
-        # Insted of exit create a gui showing complete
+        else:
+            messagebox.showinfo("showinfo", "No Data Submitted")
         return
 
 
@@ -104,9 +105,29 @@ def warehouse_worker():
     return
 
 def processor():
-    ##
-    # MongoDB STUFF GOES HERE
-    ##
+    dates = ['', '']
+    win= Tk()
+    win.title("Warehouse Management")
+    win.geometry("500x400")
+
+    MainLable=Label(win, text="Processor", font=("Courier 22 bold"))
+    MainLable.pack()
+
+    dateLable=Label(win, text="Select Date to Process", font=("Courier 12 bold"))
+    dateLable.pack()
+
+    cal = Calendar(win, selectmode = 'day',
+               year = today.year, month = today.month,
+               day = today.day)
+
+    cal.pack(pady = 20)
+    def selected_date(date):
+        print(date)
+        return
+    button = Button(win, text="Processor", command=lambda: [ win.destroy(),selected_date(date = cal.get_date() )])
+    button.pack(side = BOTTOM, pady = 10)
+    win.mainloop()
+
     return
 
 def main():
