@@ -6,12 +6,6 @@ import time
 from datetime import date
 
 
-worker_post = {
-    'Storage_Type': '',
-    'Date_Received': '',
-
-
-}
 
 processor_post = {
     'Storage_Type': '',
@@ -58,40 +52,40 @@ def warehouse_worker():
 
     win= Tk()
     win.title("Warehouse Management")
-    win.geometry("950x200")
+    win.geometry("1050x200")
 
     MainLable=Label(win, text="Received Information", font=("Courier 22 bold"))
     MainLable.pack()
 
     quant=Label(win, text="Quantity:", font=("Courier 14 bold"))
-    quant.place(x=0,y=45)
+    quant.place(x=10,y=45)
     quantent= Entry(win, width= 2)
     quantent.focus_set()
-    quantent.place(x=0,y=50)
+    quantent.place(x=120,y=50)
 
     storageVar = StringVar(win)
     storageVar.set('Storage Type') # Def Value
     storage = OptionMenu(win, storageVar, *Storage_Type)
     storage.config(bg="#ffffff")
-    storage.place(x=20,y=45)
+    storage.place(x=140,y=45)
 
     storeVar = StringVar(win)
     storeVar.set('Store Number') # Def Value
     store = OptionMenu(win, storeVar, *Store_Number)
     store.config(bg="#ffffff")
-    store.place(x=135,y=45)
+    store.place(x=250,y=45)
 
     contentsVar = StringVar(win)
     contentsVar.set('Contents') # Def Value
     contents = OptionMenu(win, contentsVar, *contents_list)
     contents.config(bg="#ffffff")
-    contents.place(x=260,y=45)
+    contents.place(x=380,y=45)
 
     problems=Label(win, text="Problems:", font=("Courier 14 bold"))
-    problems.place(x=360,y=45)
+    problems.place(x=480,y=45)
     problemsent= Entry(win, width= 75)
     problemsent.focus_set()
-    problemsent.place(x=475,y=50)
+    problemsent.place(x=580,y=50)
 
 
     ttk.Button(win, text= "Done",width= 20, command= done).pack(side = BOTTOM, pady = 10)
