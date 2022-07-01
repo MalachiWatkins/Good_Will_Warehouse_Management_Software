@@ -10,6 +10,7 @@ from pymongo import MongoClient
 import pymongo
 ### Mong DB ###
 
+
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 receiverCollection = warehouse_db["receiver"]
 
@@ -48,6 +49,11 @@ def main():
     template = jinja_env.get_template('Main.html')
     return template.render()
 
+
+######################################################################
+################## receiver ##########################################
+######################################################################
+
 @app.route('/rec', methods = ['POST', 'GET']) # Receving route
 def rec():
 
@@ -74,6 +80,20 @@ def rec():
 @app.route('/rec_finished',methods = ['POST', 'GET']) # Reciving finished post
 def rec_finished():
     template = jinja_env.get_template('rec_finished.html')
+    return template.render()
+
+######################################################################
+#################### Processor #################################
+######################################################################
+
+@app.route('/proc',methods = ['POST', 'GET']) # Reciving finished post
+def proc():
+    template = jinja_env.get_template('proc.html')
+    return template.render()
+
+@app.route('/proc_finished',methods = ['POST', 'GET']) # Reciving finished post
+def proc_finished():
+    template = jinja_env.get_template('proc_finished.html')
     return template.render()
 
 if __name__ == '__main__':
