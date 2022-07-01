@@ -10,7 +10,6 @@ from pymongo import MongoClient
 import pymongo
 ### Mong DB ###
 
-
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 receiverCollection = warehouse_db["receiver"]
 
@@ -37,7 +36,7 @@ date_format = today.strftime("%m/%d/%Y")
 
 
 def rec_post(post): # Receving Document
-    if post['Storage_Type'] != 'Storage Type':
+    if post['Storage_Type'] != '':
         receiverCollection.insert_one(post)
     else:
         # DATA NOT SUBMITTED ROUTE GOES HERE
