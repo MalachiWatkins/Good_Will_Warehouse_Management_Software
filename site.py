@@ -10,7 +10,7 @@ from pymongo import MongoClient
 import pymongo
 ### Mong DB ###
 
-cluster = MongoClient("mongodb+srv://goodwill:oRbcvvbr8ZaDAXP3@cluster0.9favd.mongodb.net/?retryWrites=true&w=majority")
+
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 receiverCollection = warehouse_db["receiver"]
 
