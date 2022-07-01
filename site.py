@@ -32,7 +32,7 @@ app._static_folder = "/templates"
 
 today = date.today()
 date_format = today.strftime("%m/%d/%Y")
-
+date_proc_format = today
 ######################
 
 
@@ -87,8 +87,13 @@ def rec_finished():
 ######################################################################
 
 @app.route('/proc',methods = ['POST', 'GET']) # Reciving finished post
-def proc():
-    template = jinja_env.get_template('proc.html')
+def proc_main():
+    template = jinja_env.get_template('proc_main.html')
+    return template.render(date=date_proc_format)
+
+@app.route('/proc_data',methods = ['POST', 'GET']) # Reciving finished post
+def proc_data():
+    template = jinja_env.get_template('proc_data.html')
     return template.render()
 
 @app.route('/proc_finished',methods = ['POST', 'GET']) # Reciving finished post
