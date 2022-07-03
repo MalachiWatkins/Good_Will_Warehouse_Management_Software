@@ -12,13 +12,14 @@
 
     body {
       margin: 0;
-      background-color: #0e4883;
-      background-image: url();
+      background-color: #474747;
+      background-image: url(https://wallpaperset.com/w/full/7/5/e/67527.jpg);
       background-position: fill;
       background-repeat: no-repeat;
       background-attachment: fixed;
+      https://i.pinimg.com/originals/39/7a/3e/397a3eef10e6bbe12f74af5140ac83f1.jpg
 
-
+      font-family: "Times New Roman", Times, serif;
     }
 
     .header {
@@ -57,7 +58,15 @@
       width: 75%;
       background-color: #000000
     }
-
+    .footer {
+       position: fixed;
+       left: 0;
+       bottom: 0;
+       width: 100%;
+       color: #1c1c1c;
+       background-color: #01529c;
+       text-align: center;
+    }
     .container1 {
       padding-top: 15px;
       width: 80%;
@@ -113,17 +122,16 @@
   {% block head %}
   {% endblock%}
 </head>
-<nav class="navbar navbar-light" style="background-color: #1c1c1c;">
-  <a class="navbar-brand" style="color: #ffffff" href="/">Goodwill Warehouse Management</a>
+<nav class="navbar navbar-light" style="background-color: #01529c;">
+  <a class="navbar-brand" style="color: #ffffff; font-size:30px" href="/">Goodwill Warehouse Management</a>
   <button class="navbar-toggler" style="background-color: #ffffff" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <div class="navbar-nav">
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup" style="color:#ffffff">
+    <div class="navbar-nav" style="color:#ffffff">
       <a class=" nav-item nav-link" style="color: #ffffff;" href="/rec">Warehoue Receiver</a>
       <a class=" nav-item nav-link" style="color: #ffffff;" href="/proc">Processor</a>
       <a class=" nav-item nav-link" style="color: #ffffff;" href="/jewl">Jewelry</a>
-      <a class="nav-item nav-link" style="color: #ffffff;" href="/about">About</a>
     </div>
   </div>
 </nav>
@@ -131,6 +139,9 @@
 <body>
   {% block body %}
   {% endblock%}
+  <div class="footer">
+    <img src="https://nmcdn.io/e186d21f8c7946a19faed23c3da2f0da/0a1af74792824776a4136ed802bdd432/images/logo.png" alt="" style="width:400px;height:75px;">
+  </div>
 </body>
 <script>
 

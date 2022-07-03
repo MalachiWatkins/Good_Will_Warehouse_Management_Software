@@ -175,9 +175,44 @@ def proc_data():
 
 @app.route('/proc_rev', methods=['POST', 'GET'])  # Reciving finished post
 def proc_rev():
-    REV_documents = processor_revCollection.find()
-
     template = jinja_env.get_template('proc_rev.html')
+    REV_documents = processor_revCollection.find()
+    if request.method == 'POST':
+        ID = request.form['ID']
+        STORAGE = request.form['STORAGE']
+        CONTENTS = request.form['CONTENTS']
+        DATE_RECEIVED = request.form['DATE_RECEIVED']
+        STORE_NUMBER = request.form['STORE_NUMBER']
+        MANIFEST_NUMBER = request.form['manifest_number_form']
+        PROBLEMS = request.form['problem_form']
+        DATE_PROSESSED = date_proc_format
+        try:
+            testing = request.form['test']
+        except:
+            testing = 'null'
+
+        post = {
+            '_id': random.random(),
+            'Storage_Type': STORAGE,
+            'Date_Received':date_proc_format,
+            'Date_Processed': DATE_PROSESSED,
+            'MANIFEST_NUMBER': MANIFEST_NUMBER,
+            'Store_Number': STORE_NUMBER,
+            'Contents': CONTENTS,
+            'Problems': PROBLEMS,
+        }
+        if request.form["test"] == 'Undo Processing':
+            proc_query = {"_id": float(ID)}
+            delete_one = processor_revCollection.delete_one(proc_query)
+            move = receiverCollection.insert_one(post)
+            return template.render(data=REV_documents)
+        else:
+            proc_query = {"_id": float(ID)}
+            delete_one = processor_revCollection.delete_one(proc_query)
+            FINISHEDCollection.insert_one(post)
+            return template.render(data=REV_documents)
+
+
     return template.render(data=REV_documents)
 
 

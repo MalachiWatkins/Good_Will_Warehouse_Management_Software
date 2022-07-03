@@ -2,12 +2,7 @@
 
 {% block body %}
 <center>
-  <form class="" action="/proc_finished" method="get">
-    <div class="" style="padding-top:15px">
-      <input style="" class="btn btn-primary" type="submit" value="Submit">
-    </div>
 
-  </form>
   <form class="" action="/proc" method="get">
     <div class="" style="padding-top:15px">
       <input style="" class="btn btn-primary" type="submit" value="Back to Processing">
@@ -16,11 +11,12 @@
   </form>
 </center>
 
-{% for post in data %}
+
 
   <center>
+    <form class="" action="/proc_rev" method="post">
 
-
+    {% for post in data %}
     <div class="invscontainer">
       <div class="card">
         <div class="card-header">
@@ -46,7 +42,8 @@
             <label for="" style="font-size:25px"> Problems: {{ post.Problems }}</label>
             <p style=""> </p>
           </div>
-            <input class="btn btn-primary" type="submit" value="Undo Processing">
+            <input style="" class="btn btn-primary" type="submit" value="Finished and Submit" name="test">
+            <input class="btn btn-primary" type="submit" value="Undo Processing" name="test">
           <p class="card-text"></p>
           </form>
         </div>
@@ -56,9 +53,9 @@
     </div>
 
 
-
+{% endfor %}
   </center>
 
-{% endfor %}
+
 
 {% endblock %}

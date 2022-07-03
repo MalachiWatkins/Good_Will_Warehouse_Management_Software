@@ -1,38 +1,40 @@
 {% extends "base.html" %}
 
 {% block body %}
+<center>
 <header style="color:White">
-  <p style="font-size:50px">Date selection</p>
+  <p style="font-size:50px;color:white">Date selection</p>
 </header>
 <form class="invscontainer" action="/proc_data" method="post">
-  <label for="start" style="font-size:20px;color:White">Select Date for Prosessing:</label>
+  <div class="invscontainer">
+    <label for="start" style="font-size:20px;color:white;padding-bottom:20px">Select Date for Prosessing: </label>
 
-  <input type="date" id="start" name="date_select" value="{{ date }}" min="2022-01-01" max="2030-12-31">
-  <div class="form-group">
-    <label for=""> Storage Type </label>
-    <input type="hidden" name="summited" value="no"></input>
-    <select class="form-control" id="catigory search" name="storage_type">
-      <option></option>
-      <option>Collectables</option>
-      <option>Books</option>
-      <option>Media</option>
-    </select>
+    <input type="date" id="start" name="date_select" value="{{ date }}" min="2022-01-01" max="2030-12-31">
+    <div class="form-group"style="font-size:20px;color:white;padding-bottom:30px">
+      <label for="" > Storage Type </label>
+      <input type="hidden" name="summited" value="no"></input>
+      <select class="form-control" id="catigory search" name="storage_type">
+        <option></option>
+        <option>Collectables</option>
+        <option>Books</option>
+        <option>Media</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="" style="font-size:20px;color:white"> Store Number </label>
+      <select class="form-control" id="catigory search" name="store_number">
+        <option></option>
+        <option>118</option>
+        <option>224</option>
+
+      </select>
+    </div>
+    <input class="btn btn-primary" type="submit" value="Search">
+
   </div>
 
-  <div class="form-group">
-    <label for=""> Store Number </label>
-    <select class="form-control" id="catigory search" name="store_number">
-      <option></option>
-      <option>118</option>
-      <option>224</option>
-
-    </select>
-  </div>
-  <input class="btn btn-primary" type="submit" value="Search">
-
 </form>
-<form class="" action="/proc_data" method="post">
-
-</form>
+<center>
 
 {% endblock %}
