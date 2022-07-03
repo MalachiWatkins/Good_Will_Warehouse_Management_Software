@@ -8,8 +8,8 @@ import webbrowser
 from datetime import date
 from pymongo import MongoClient
 import pymongo
+import random
 ### Mong DB ###
-
 
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 receiverCollection = warehouse_db["receiver"]
@@ -37,16 +37,24 @@ app._static_folder = "/templates"
 
 today = date.today()
 date_format = today.strftime("%Y-%m-%d")
-date_proc_format = today
+date_proc_format = str(today)
 ######################
 
 
 def db_post(post, isJewlery):  # Receving Document
     if post['Storage_Type'] != '':
         if isJewlery == True:
-            jewleryCollection.insert_one(post)
+            x=0
+            while x < int(post['Quantity']):
+                post['_id'] = random.random()
+                jewleryCollection.insert_one(post)
+                x+=1
         else:
-            receiverCollection.insert_one(post)
+            x=0
+            while x < int(post['Quantity']):
+                post['_id'] = random.random()
+                receiverCollection.insert_one(post)
+                x+=1
     else:
         # DATA NOT SUBMITTED ROUTE GOES HERE
         null = 'null'
@@ -75,6 +83,7 @@ def rec():
         ITEM_CONTENTS = request.form['item_contents']
         PROBLEM_FORM = request.form['problem_form']
         data_post = {
+            '_id': random.random(),
             'Quantity': QUANTITY,
             'Storage_Type': STORAGE_TYPE,
             'Date_Received': date_format,
@@ -110,9 +119,41 @@ def proc_main():
 def proc_data():
     template = jinja_env.get_template('proc_data.html')
     if request.method == 'POST':
-        date_selected = request.form['date_select']
-        cat_selected = request.form['storage_type']
-        store_selected = request.form['store_number']
+        if request.form['summited'] == 'yes':
+            ID = request.form['ID']
+            STORAGE = request.form['STORAGE']
+            CONTENTS = request.form['CONTENTS']
+            DATE_RECEIVED = request.form['DATE_RECEIVED']
+            STORE_NUMBER = request.form['STORE_NUMBER']
+            MANIFEST_NUMBER = request.form['manifest_number_form']
+            PROBLEMS = request.form['problem_form']
+            DATE_PROSESSED = date_proc_format
+
+            # Delete post
+            delquery = { "_id": float(ID) }
+            receiverCollection.delete_one(delquery)
+            # add post to rev data
+            New_Post = {
+                '_id': random.random(),
+                'Storage_Type': STORAGE,
+                'Date_Received':date_proc_format,
+                'Date_Processed': DATE_PROSESSED,
+                'MANIFEST_NUMBER': MANIFEST_NUMBER,
+                'Store_Number': STORE_NUMBER,
+                'Contents': CONTENTS,
+                'Problems': PROBLEMS,
+
+            }
+            processor_revCollection.insert_one(New_Post)
+            date_selected = DATE_RECEIVED
+            cat_selected = CONTENTS
+            store_selected = STORE_NUMBER
+        else:
+
+            date_selected = request.form['date_select']
+            cat_selected = request.form['storage_type']
+            store_selected = request.form['store_number']
+
         if cat_selected != "" and store_selected != "":
             proc_query = {"Date_Received": date_selected,
                           'Store_Number': store_selected, 'Contents': cat_selected}
@@ -123,34 +164,21 @@ def proc_data():
             else:
                 proc_query = {"Date_Received": date_selected,
                               'Store_Number': store_selected}
-
         else:
             proc_query = {"Date_Received": date_selected}
 
         proc_documents = receiverCollection.find(proc_query)
 
-        doc_list = []
-
-        for doc in proc_documents:
-
-            x = 0
-            quant_int = int(doc['Quantity'])
-            while x < quant_int:
-                doc_list.append(doc)
-                x += 1
-
-        return template.render(data=doc_list)
+        return template.render(data=proc_documents)
     return template.render()
 
 
 @app.route('/proc_rev', methods=['POST', 'GET'])  # Reciving finished post
 def proc_rev():
-    if request.method == 'POST':
-        form = request.form['hello']
+    REV_documents = processor_revCollection.find()
 
-        print(form)
     template = jinja_env.get_template('proc_rev.html')
-    return template.render()
+    return template.render(data=REV_documents)
 
 
 @app.route('/proc_finished', methods=['POST', 'GET'])  # Reciving finished post
