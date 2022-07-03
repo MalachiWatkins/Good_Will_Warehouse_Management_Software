@@ -132,19 +132,23 @@ def proc_data():
         doc_list = []
 
         for doc in proc_documents:
-            print(doc)
+
             x = 0
             quant_int = int(doc['Quantity'])
             while x < quant_int:
                 doc_list.append(doc)
                 x += 1
-        print(doc_list)
+
         return template.render(data=doc_list)
     return template.render()
 
 
 @app.route('/proc_rev', methods=['POST', 'GET'])  # Reciving finished post
 def proc_rev():
+    if request.method == 'POST':
+        form = request.form['hello']
+
+        print(form)
     template = jinja_env.get_template('proc_rev.html')
     return template.render()
 

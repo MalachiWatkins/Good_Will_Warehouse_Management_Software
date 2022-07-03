@@ -1,19 +1,17 @@
 {% extends "base.html" %}
 
 {% block body %}
-<header style="color:White">
-  <p style="font-size:50px  ">PROC DATA</p>
-</header>
 
-{% for post in data %}
 
-<form class="" action="" method="post">
+
+<form class="" action="/proc_rev" method="post" name="test">
   <center>
 
+    {% for post in data %}
     <div class="invscontainer">
       <div class="card">
         <div class="card-header">
-          <p style="font-size:25px">Storage Type: {{ post.Storage_Type }}</p>
+          <p style="font-size:25px" name='hello'>Storage Type: {{ post.Storage_Type }}</p>
           <div class="card-body">
             <h5 class="card-title">Contents: {{ post.Contents }}</h5>
             <h5 class="card-title">
@@ -32,17 +30,26 @@
               <textarea class="form-control" id="problem_form" rows="3" name="problem_form">{{ post.Problems }}</textarea>
             </div>
           </div>
-
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="check1">
+            <label class="form-check-label" for="check1">
+              Process
+            </label>
+          </div>
           <p class="card-text"></p>
-          <a href="#" class="btn btn-primary">Process</a>
+
         </div>
 
 
       </div>
     </div>
+    {% endfor %}
+    <header style="color:White;padding-top: 15px">
+      <input class="btn btn-primary" type="submit" value="Submit">
+    </header>
 
   </center>
 </form>
 
-{% endfor %}
+
 {% endblock %}
