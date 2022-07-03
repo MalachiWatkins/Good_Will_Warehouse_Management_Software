@@ -81,18 +81,33 @@
       padding-top: 10px;
       height: 25%;
       width: 25%;
+
     }
+
     div.invsquant {
       padding-top: 15px;
       padding-bottom: 70px;
       height: 10px;
       width: 75px;
     }
+
     .padd {
-      padding-top:15px;
+      padding-top: 15px;
     }
-    {% block style %}
-    {% endblock%}
+
+    .invsquantProc {
+      height: 10px;
+      width: 75px;
+      padding-bottom: 70px;
+    }
+
+      {
+      % block style %
+    }
+
+      {
+      % endblock%
+    }
   </style>
   {% block head %}
   {% endblock%}
@@ -111,6 +126,7 @@
     </div>
   </div>
 </nav>
+
 <body>
   {% block body %}
   {% endblock%}
