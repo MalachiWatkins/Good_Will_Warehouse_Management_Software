@@ -13,11 +13,18 @@ import random
 
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 receiverCollection = warehouse_db["receiver"]
+
 processorCollection = warehouse_db["processor"]
 processor_revCollection = warehouse_db["processor_rev"]
+
+
 jewleryCollection = warehouse_db["jewlery"]
+jewlery_revCollection = warehouse_db["jewlery_rev"]
+
+
 FINISHEDCollection = warehouse_db["FINISHED"]
 
+Finished_JewlCollection = warehouse_db["FINISHED_JEWL"]
 ### Add another route for view all and edit ####
 ##############
 
@@ -216,15 +223,151 @@ def proc_rev():
     return template.render(data=REV_documents)
 
 
-@app.route('/proc_finished', methods=['POST', 'GET'])  # Reciving finished post
-def proc_finished():
-    template = jinja_env.get_template('proc_finished.html')
-    return template.render()
+
 
 ######################################################################
 #################### Jewelry ########################################
 ######################################################################
 
+@app.route('/jewl', methods=['POST', 'GET'])  # Reciving finished post
+def jewl():
+    template = jinja_env.get_template('jewl_main.html')
+    return template.render(date=date_proc_format)
+
+
+@app.route('/jewl_data', methods=['POST', 'GET'])  # Reciving finished post
+def jewl_data():
+    template = jinja_env.get_template('jewl_data.html')
+    if request.method == 'POST':
+        if request.form['summited'] == 'yes':
+            ID = request.form['ID']
+            STORAGE = request.form['STORAGE']
+            CONTENTS = request.form['CONTENTS']
+            DATE_RECEIVED = request.form['DATE_RECEIVED']
+            STORE_NUMBER = request.form['STORE_NUMBER']
+            MANIFEST_NUMBER = request.form['manifest_number_form']
+            PROBLEMS = request.form['problem_form']
+            DATE_PROSESSED = date_proc_format
+            PROCESSED_BY = request.form['processed_by']
+            SEAL_NUMBER = request.form['seal_number_form']
+            # Delete post
+            delquery = { "_id": float(ID) }
+            jewleryCollection.delete_one(delquery)
+            # add post to rev data
+            New_Post = {
+                '_id': random.random(),
+                'Storage_Type': STORAGE,
+                'Date_Received':date_proc_format,
+                'Date_Processed': DATE_PROSESSED,
+                'MANIFEST_NUMBER': MANIFEST_NUMBER,
+                'Store_Number': STORE_NUMBER,
+                'Contents': CONTENTS,
+                'Problems': PROBLEMS,
+                'Processed_By': PROCESSED_BY,
+                'Seal_Number': SEAL_NUMBER,
+
+            }
+            jewlery_revCollection.insert_one(New_Post)
+            date_selected = DATE_RECEIVED
+            cat_selected = CONTENTS
+            store_selected = STORE_NUMBER
+        else:
+
+            date_selected = request.form['date_select']
+            cat_selected = request.form['storage_type']
+            store_selected = request.form['store_number']
+
+        if cat_selected != "" and store_selected != "":
+            proc_query = {"Date_Received": date_selected,
+                          'Store_Number': store_selected, 'Contents': cat_selected}
+        elif cat_selected != "" or store_selected != "":
+            if cat_selected != "":
+                proc_query = {"Date_Received": date_selected,
+                              'Contents': cat_selected}
+            else:
+                proc_query = {"Date_Received": date_selected,
+                              'Store_Number': store_selected}
+        else:
+            proc_query = {"Date_Received": date_selected}
+
+        proc_documents = jewleryCollection.find(proc_query)
+
+        return template.render(data=proc_documents)
+    return template.render()
+
+
+@app.route('/jewl_rev', methods=['POST', 'GET'])  # Reciving finished post
+def jewl_rev():
+    template = jinja_env.get_template('jewl_rev.html')
+    REV_documents = jewlery_revCollection.find()
+    if request.method == 'POST':
+        ID = request.form['ID']
+        STORAGE = request.form['STORAGE']
+        CONTENTS = request.form['CONTENTS']
+        DATE_RECEIVED = request.form['DATE_RECEIVED']
+        STORE_NUMBER = request.form['STORE_NUMBER']
+        MANIFEST_NUMBER = request.form['manifest_number_form']
+        PROBLEMS = request.form['problem_form']
+        DATE_PROSESSED = date_proc_format
+        PROCESSED_BY = request.form['processed_by']
+        SEAL_NUMBER = request.form['seal_number_form']
+        try:
+            testing = request.form['test']
+        except:
+            testing = 'null'
+
+        post = {
+            '_id': random.random(),
+            'Storage_Type': STORAGE,
+            'Date_Received':date_proc_format,
+            'Date_Processed': DATE_PROSESSED,
+            'MANIFEST_NUMBER': MANIFEST_NUMBER,
+            'Store_Number': STORE_NUMBER,
+            'Contents': CONTENTS,
+            'Problems': PROBLEMS,
+            'Processed_By': PROCESSED_BY,
+            'Seal_Number': SEAL_NUMBER,
+
+        }
+        if request.form["test"] == 'Undo Processing':
+            proc_query = {"_id": float(ID)}
+            delete_one = jewlery_revCollection.delete_one(proc_query)
+            move = jewleryCollection.insert_one(post)
+            return template.render(data=REV_documents)
+        else:
+            proc_query = {"_id": float(ID)}
+            delete_one = jewlery_revCollection.delete_one(proc_query)
+            Finished_JewlCollection.insert_one(post)
+            return template.render(data=REV_documents)
+
+
+    return template.render(data=REV_documents)
+
+@app.route('/view_jewlery_main', methods=['POST', 'GET'])  # Reciving finished post
+def view_jewlery_main():
+    template = jinja_env.get_template('jewl_view_main.html')
+    return template.render()
+
+@app.route('/view_jewlery', methods=['POST', 'GET'])  # Reciving finished post
+def view():
+    if request.method == 'POST':
+        date = request.form['date_select']
+        REV_documents = Finished_JewlCollection.find()
+    template = jinja_env.get_template('jewlery_view.html')
+    return template.render(data = REV_documents)
+
+@app.route('/view_sgw_main', methods=['POST', 'GET'])  # Reciving finished post
+def view_sgw_main():
+    template = jinja_env.get_template('view_sgw_main.html')
+    return template.render()
+
+@app.route('/view_sgw', methods=['POST', 'GET'])  # Reciving finished post
+def view_sgw():
+    if request.method == 'POST':
+        date = request.form['date_select']
+        REV_documents = FINISHEDCollection.find()
+    template = jinja_env.get_template('view_sgw.html')
+    return template.render(data = REV_documents)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=80)
