@@ -8,7 +8,7 @@ warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 FINISHEDCollection = warehouse_db["FINISHED"]
 Finished_JewlCollection = warehouse_db["FINISHED_JEWL"]
 
-def gen(dnd,spreadsheet, collection):
+def gen(dnd,spreadsheet, collection, type):
     with open(dnd, "r") as collum:
         empty_collum = collum.readline()
     wb = load_workbook(spreadsheet)
@@ -18,10 +18,11 @@ def gen(dnd,spreadsheet, collection):
 
     y = empty_collum
     x = 0
+
     document_list = ['Storage_Type', 'Date_Received', 'Store_Number','Contents', 'Date_Processed', 'MANIFEST_NUMBER', 'Problems']
     for document in collection.find():
         print(document)
-        while x < 6:
+        while x < 7:
             if x == 0:
                 storage_type =  sheet.cell(row = int(empty_collum), column = 1)
                 storage_type.value = str(document[document_list[x]])
@@ -32,9 +33,24 @@ def gen(dnd,spreadsheet, collection):
                 store_number = sheet.cell(row = int(empty_collum), column = 3)
                 store_number.value = str(document[document_list[x]])
             elif x == 3:
+                Contents = sheet.cell(row = int(empty_collum), column = 3)
+                Contents.value = str(document[document_list[x]])
+            elif x == 4:
+                Date_Processed = sheet.cell(row = int(empty_collum), column = 3)
+                Date_Processed.value = str(document[document_list[x]])
+            elif x == 5:
+                MANIFEST_NUMBER = sheet.cell(row = int(empty_collum), column = 3)
+                MANIFEST_NUMBER.value = str(document[document_list[x]])
+            elif x == 6:
+                Problems = sheet.cell(row = int(empty_collum), column = 3)
+                Problems.value = str(document[document_list[x]])
+            else:
+                nill = 'null'
+
+
 
     return
-gen(dnd='DO_NOT_DELETE_SGW.txt',spreadsheet='Gay_lord_Toat_Log.xlsx', collection=FINISHEDCollection)
+gen(dnd='DO_NOT_DELETE_SGW.txt',spreadsheet='Gay_lord_Toat_Log.xlsx', collection=FINISHEDCollection, type='gaylord_tote')
 time.sleep(100)
 
 while x < 17:

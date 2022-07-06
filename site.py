@@ -272,7 +272,8 @@ def jewl_data():
             cat_selected = CONTENTS
             store_selected = STORE_NUMBER
         else:
-
+                        delquery = { "_id": float(ID) }
+                        jewleryCollection.delete_one(delquery)
             date_selected = request.form['date_select']
             cat_selected = request.form['storage_type']
             store_selected = request.form['store_number']
@@ -332,7 +333,7 @@ def jewl_rev():
         if request.form["test"] == 'Undo Processing':
             proc_query = {"_id": float(ID)}
             delete_one = jewlery_revCollection.delete_one(proc_query)
-            move = jewleryCollection.insert_one(post)
+            jewleryCollection.insert_one(post)
             return template.render(data=REV_documents)
         else:
             proc_query = {"_id": float(ID)}
