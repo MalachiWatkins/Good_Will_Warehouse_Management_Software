@@ -10,7 +10,6 @@ from pymongo import MongoClient
 import pymongo
 import random
 ### Mong DB ###
-
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 receiverCollection = warehouse_db["receiver"]
 
@@ -369,6 +368,6 @@ def view_sgw():
     return template.render(data = REV_documents)
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=80)
+    app.run(debug=True, host="0.0.0.0", port=1024)
 
 #   http://sponge.icarus.io/?date=(Date goes here in YYYY-MM-DD form)

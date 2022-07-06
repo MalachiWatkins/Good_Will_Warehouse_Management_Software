@@ -5,7 +5,6 @@ from openpyxl import load_workbook
 import time
 from plyer import notification
 
-cluster = MongoClient("mongodb+srv://warehouse_user:FKCKzTyBMH7CBfiD@cluster0.9favd.mongodb.net/?retryWrites=true&w=majority")
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 FINISHEDCollection = warehouse_db["FINISHED"]
 Finished_JewlCollection = warehouse_db["FINISHED_JEWL"]
