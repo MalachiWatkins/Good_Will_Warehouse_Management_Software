@@ -12,16 +12,20 @@
 
     <input type="date" id="start" name="date_select" value="{{ date }}" min="2022-01-01" max="2030-12-31">
     <div class="form-group"style="font-size:20px;color:white;padding-bottom:30px">
-      <label for="" > Storage Type </label>
+      <label for="" > Filters </label>
       <input type="hidden" name="summited" value="no"></input>
       <select class="form-control" id="catigory search" name="storage_type">
+        <option></option>
         <option>Jewelry</option
       </select>
     </div>
 
-    <div class="form-group">
-      <label for="" style="font-size:20px;color:white"> Store Number </label>
-      <select class="form-control" id="catigory search" name="store_number">
+
+    <div class="form-group"style="font-size:20px;color:white">
+      <label for="" > Store Number </label>
+      <input type="hidden" name="summited" value="no"></input>
+      <select class="form-control" id="catigory search" name="store_number" >
+        <option></option>
         <option>100</option>
         <option>101</option>
         <option>103</option>
@@ -46,12 +50,9 @@
         <option>E-Commerce</option>
         <option>Shared computer Refurb</option>
         <option>SubTropolis</option>
-
-
-
-
       </select>
     </div>
+
     <input class="btn btn-primary" type="submit" value="Search">
 
   </div>

@@ -272,8 +272,6 @@ def jewl_data():
             cat_selected = CONTENTS
             store_selected = STORE_NUMBER
         else:
-                        delquery = { "_id": float(ID) }
-                        jewleryCollection.delete_one(delquery)
             date_selected = request.form['date_select']
             cat_selected = request.form['storage_type']
             store_selected = request.form['store_number']
