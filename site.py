@@ -10,6 +10,8 @@ from pymongo import MongoClient
 import pymongo
 import random
 ### Mong DB ###
+
+
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 receiverCollection = warehouse_db["receiver"]
 
@@ -366,6 +368,43 @@ def view_sgw():
         REV_documents = FINISHEDCollection.find()
     template = jinja_env.get_template('view_sgw.html')
     return template.render(data = REV_documents)
+
+@app.route('/stats', methods=['POST', 'GET'])  # Reciving finished post
+def stats():
+    book_query = {"Contents": 'Books'}
+    media_query = {"Contents": "Media"}
+    sgw_query = {"Contents": "Collectables"}
+    jewlery_query = {"Contents": "Jewelry"}
+
+    total_not_added_to_spreadsheet_books = FINISHEDCollection.count_documents({"Contents": "Books"})
+    total_not_added_to_spreadsheet_media = FINISHEDCollection.count_documents({"Contents": "Media"})
+    total_not_added_to_spreadsheet_sgw = FINISHEDCollection.count_documents({"Contents": "Collectables"})
+    total_not_added_to_spreadsheet_jewlery = Finished_JewlCollection.count_documents({"Contents": "Jewelry"})
+    ## Total Left to process
+    total_books_gay = receiverCollection.count_documents({"Contents": "Books", "Storage_Type":"Gaylord"})
+    total_books_tote = receiverCollection.count_documents({"Contents": "Books", "Storage_Type":"Tote"})
+    total_media_gay = receiverCollection.count_documents({"Contents": "Media", "Storage_Type":"Gaylord"})
+    total_media_tote = receiverCollection.count_documents({"Contents": "Media", "Storage_Type":"Tote"})
+    total_sgw_gay = receiverCollection.count_documents({"Contents": "Collectables", "Storage_Type":"Gaylord"})
+    total_sgw_tote = receiverCollection.count_documents({"Contents": "Collectables", "Storage_Type":"Tote"})
+    total_jewlery_gay = jewleryCollection.count_documents({"Contents": "Jewelry", "Storage_Type":"Gaylord"})
+    total_jewlery_tote = jewleryCollection.count_documents({"Contents": "Jewelry", "Storage_Type":"Tote"})
+    ### Processed But not submitted
+    toat_review_books = processor_revCollection.count_documents({"Contents": "Books"})
+    toat_review_media = processor_revCollection.count_documents({"Contents": "Media"})
+    toat_review_jewlery = jewlery_revCollection.count_documents({"Contents": "Jewelry"})
+    toat_review_sgw = processor_revCollection.count_documents({"Contents": "Collectables"})
+
+    Total_to_process_gay = total_books_gay + total_media_gay + total_sgw_gay + total_jewlery_gay
+    Total_to_process_tote =  total_books_tote + total_media_tote + total_sgw_tote + total_jewlery_tote
+    total_to_review = toat_review_books + toat_review_media + toat_review_jewlery + toat_review_sgw
+    total_ready_for_logging = total_not_added_to_spreadsheet_books + total_not_added_to_spreadsheet_media + total_not_added_to_spreadsheet_sgw + total_not_added_to_spreadsheet_jewlery
+
+    template = jinja_env.get_template('count.html')
+    return template.render(tgtp=Total_to_process_gay, tttp=Total_to_process_tote , ttr=total_to_review, trfl=total_ready_for_logging, sgwTGTP = total_sgw_gay, sgwTTTP = total_sgw_tote, sgwTTR = toat_review_sgw, sgwTRFL=total_not_added_to_spreadsheet_sgw,
+    jewlTGTP=total_jewlery_gay, jewlTTTP=total_jewlery_tote,jewlTTR=toat_review_jewlery, jewlTRFL=total_not_added_to_spreadsheet_jewlery,
+    bookTGTP=total_books_gay,bookTTTP=total_books_tote, bookTTR=toat_review_books,bookTRFL=total_not_added_to_spreadsheet_books,
+    medTGTP=total_media_gay,medTTTP=total_media_tote, medTTR= toat_review_media, medTRFL=total_not_added_to_spreadsheet_media)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=1024)
