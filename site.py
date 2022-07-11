@@ -13,21 +13,18 @@ import random
 
 
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
-receiverCollection = warehouse_db["receiver"]
+user = warehouse_db["User"]
+Receiver = warehouse_db["Receiver"]
 
-processorCollection = warehouse_db["processor"]
-processor_revCollection = warehouse_db["processor_rev"]
+Processor_Review = warehouse_db["Processor_Review"]
 
+Jewlery_Received = warehouse_db["Jewlery_Received"]
+Jewlery_Review = warehouse_db["Jewlery_Review"]
 
-jewleryCollection = warehouse_db["jewlery"]
-jewlery_revCollection = warehouse_db["jewlery_rev"]
+Book_Received = warehouse_db["Book_Received"]
 
-
-FINISHEDCollection = warehouse_db["FINISHED"]
-
-Finished_JewlCollection = warehouse_db["FINISHED_JEWL"]
-### Add another route for view all and edit ####
-##############
+Ready_For_Logging = warehouse_db["Ready_For_Logging"]
+Jewlery_Ready_For_Logging = warehouse_db["Jewlery_Ready_For_Logging"]
 
 #### Flask Stuff #####
 
@@ -49,19 +46,20 @@ date_proc_format = str(today)
 ######################
 
 
-def db_post(post, isJewlery):  # Receving Document
+#### Chooses Jewelry Collection if submitted is jewlery ###
+def db_post(post, isJewlery):
     if post['Storage_Type'] != '':
         if isJewlery == True:
             x=0
             while x < int(post['Quantity']):
                 post['_id'] = random.random()
-                jewleryCollection.insert_one(post)
+                Jewlery_Received.insert_one(post)
                 x+=1
         else:
             x=0
             while x < int(post['Quantity']):
                 post['_id'] = random.random()
-                receiverCollection.insert_one(post)
+                Receiver.insert_one(post)
                 x+=1
     else:
         # DATA NOT SUBMITTED ROUTE GOES HERE
@@ -117,17 +115,18 @@ def rec_finished():
 ######################################################################
 
 
-@app.route('/proc', methods=['POST', 'GET'])  # Reciving finished post
+@app.route('/proc', methods=['POST', 'GET'])  # Processing Landing
 def proc_main():
     template = jinja_env.get_template('proc_main.html')
     return template.render(date=date_proc_format)
 
 
-@app.route('/proc_data', methods=['POST', 'GET'])  # Reciving finished post
+@app.route('/proc_data', methods=['POST', 'GET'])  # Processing Data Viewing
 def proc_data():
     template = jinja_env.get_template('proc_data.html')
     if request.method == 'POST':
-        if request.form['summited'] == 'yes':
+        if request.form['summited'] == 'yes': ### Checks if data is Submitted and sends it to review
+            ##### Gets form Data and creates a post with it #####
             ID = request.form['ID']
             STORAGE = request.form['STORAGE']
             CONTENTS = request.form['CONTENTS']
@@ -137,10 +136,9 @@ def proc_data():
             PROBLEMS = request.form['problem_form']
             DATE_PROSESSED = date_proc_format
 
-            # Delete post
+            # Deletes Post and addes it to the Review collecion for viewing with a new ID
             delquery = { "_id": float(ID) }
-            receiverCollection.delete_one(delquery)
-            # add post to rev data
+            Receiver.delete_one(delquery)
             New_Post = {
                 '_id': random.random(),
                 'Storage_Type': STORAGE,
@@ -152,11 +150,11 @@ def proc_data():
                 'Problems': PROBLEMS,
 
             }
-            processor_revCollection.insert_one(New_Post)
+            Processor_Review.insert_one(New_Post)
             date_selected = DATE_RECEIVED
             cat_selected = CONTENTS
             store_selected = STORE_NUMBER
-        else:
+        else: ### If request method was not post
 
             date_selected = request.form['date_select']
             cat_selected = request.form['storage_type']
@@ -175,16 +173,16 @@ def proc_data():
         else:
             proc_query = {"Date_Received": date_selected}
 
-        proc_documents = receiverCollection.find(proc_query)
+        proc_documents = Receiver.find(proc_query)
 
         return template.render(data=proc_documents)
     return template.render()
 
 
-@app.route('/proc_rev', methods=['POST', 'GET'])  # Reciving finished post
+@app.route('/proc_rev', methods=['POST', 'GET'])  #  Processing Data Reviewing
 def proc_rev():
     template = jinja_env.get_template('proc_rev.html')
-    REV_documents = processor_revCollection.find()
+    REV_documents = Processor_Review.find()
     if request.method == 'POST':
         ID = request.form['ID']
         STORAGE = request.form['STORAGE']
@@ -211,13 +209,13 @@ def proc_rev():
         }
         if request.form["test"] == 'Undo Processing':
             proc_query = {"_id": float(ID)}
-            delete_one = processor_revCollection.delete_one(proc_query)
-            move = receiverCollection.insert_one(post)
+            delete_one = Processor_Review.delete_one(proc_query)
+            move = Receiver.insert_one(post)
             return template.render(data=REV_documents)
         else:
             proc_query = {"_id": float(ID)}
-            delete_one = processor_revCollection.delete_one(proc_query)
-            FINISHEDCollection.insert_one(post)
+            delete_one = Processor_Review.delete_one(proc_query)
+            Ready_For_Logging.insert_one(post)
             return template.render(data=REV_documents)
 
 
@@ -253,7 +251,7 @@ def jewl_data():
             SEAL_NUMBER = request.form['seal_number_form']
             # Delete post
             delquery = { "_id": float(ID) }
-            jewleryCollection.delete_one(delquery)
+            Jewlery_Received.delete_one(delquery)
             # add post to rev data
             New_Post = {
                 '_id': random.random(),
@@ -268,7 +266,7 @@ def jewl_data():
                 'Seal_Number': SEAL_NUMBER,
 
             }
-            jewlery_revCollection.insert_one(New_Post)
+            Jewlery_Review.insert_one(New_Post)
             date_selected = DATE_RECEIVED
             cat_selected = CONTENTS
             store_selected = STORE_NUMBER
@@ -290,7 +288,7 @@ def jewl_data():
         else:
             proc_query = {"Date_Received": date_selected}
 
-        proc_documents = jewleryCollection.find(proc_query)
+        proc_documents = Jewlery_Received.find(proc_query)
 
         return template.render(data=proc_documents)
     return template.render()
@@ -299,7 +297,7 @@ def jewl_data():
 @app.route('/jewl_rev', methods=['POST', 'GET'])  # Reciving finished post
 def jewl_rev():
     template = jinja_env.get_template('jewl_rev.html')
-    REV_documents = jewlery_revCollection.find()
+    REV_documents = Jewlery_Review.find()
     if request.method == 'POST':
         ID = request.form['ID']
         STORAGE = request.form['STORAGE']
@@ -331,13 +329,13 @@ def jewl_rev():
         }
         if request.form["test"] == 'Undo Processing':
             proc_query = {"_id": float(ID)}
-            delete_one = jewlery_revCollection.delete_one(proc_query)
-            jewleryCollection.insert_one(post)
+            delete_one = Jewlery_Review.delete_one(proc_query)
+            Jewlery_Received.insert_one(post)
             return template.render(data=REV_documents)
         else:
             proc_query = {"_id": float(ID)}
-            delete_one = jewlery_revCollection.delete_one(proc_query)
-            Finished_JewlCollection.insert_one(post)
+            delete_one = Jewlery_Review.delete_one(proc_query)
+            Jewlery_Ready_For_Logging.insert_one(post)
             return template.render(data=REV_documents)
 
 
@@ -352,7 +350,7 @@ def view_jewlery_main():
 def view():
     if request.method == 'POST':
         date = request.form['date_select']
-        REV_documents = Finished_JewlCollection.find()
+        REV_documents = Jewlery_Ready_For_Logging.find()
     template = jinja_env.get_template('jewlery_view.html')
     return template.render(data = REV_documents)
 
@@ -365,7 +363,7 @@ def view_sgw_main():
 def view_sgw():
     if request.method == 'POST':
         date = request.form['date_select']
-        REV_documents = FINISHEDCollection.find()
+        REV_documents = Ready_For_Logging.find()
     template = jinja_env.get_template('view_sgw.html')
     return template.render(data = REV_documents)
 
@@ -376,24 +374,24 @@ def stats():
     sgw_query = {"Contents": "Collectables"}
     jewlery_query = {"Contents": "Jewelry"}
 
-    total_not_added_to_spreadsheet_books = FINISHEDCollection.count_documents({"Contents": "Books"})
-    total_not_added_to_spreadsheet_media = FINISHEDCollection.count_documents({"Contents": "Media"})
-    total_not_added_to_spreadsheet_sgw = FINISHEDCollection.count_documents({"Contents": "Collectables"})
-    total_not_added_to_spreadsheet_jewlery = Finished_JewlCollection.count_documents({"Contents": "Jewelry"})
+    total_not_added_to_spreadsheet_books = Ready_For_Logging.count_documents({"Contents": "Books"})
+    total_not_added_to_spreadsheet_media = Ready_For_Logging.count_documents({"Contents": "Media"})
+    total_not_added_to_spreadsheet_sgw = Ready_For_Logging.count_documents({"Contents": "Collectables"})
+    total_not_added_to_spreadsheet_jewlery = Jewlery_Ready_For_Logging.count_documents({"Contents": "Jewelry"})
     ## Total Left to process
-    total_books_gay = receiverCollection.count_documents({"Contents": "Books", "Storage_Type":"Gaylord"})
-    total_books_tote = receiverCollection.count_documents({"Contents": "Books", "Storage_Type":"Tote"})
-    total_media_gay = receiverCollection.count_documents({"Contents": "Media", "Storage_Type":"Gaylord"})
-    total_media_tote = receiverCollection.count_documents({"Contents": "Media", "Storage_Type":"Tote"})
-    total_sgw_gay = receiverCollection.count_documents({"Contents": "Collectables", "Storage_Type":"Gaylord"})
-    total_sgw_tote = receiverCollection.count_documents({"Contents": "Collectables", "Storage_Type":"Tote"})
-    total_jewlery_gay = jewleryCollection.count_documents({"Contents": "Jewelry", "Storage_Type":"Gaylord"})
-    total_jewlery_tote = jewleryCollection.count_documents({"Contents": "Jewelry", "Storage_Type":"Tote"})
+    total_books_gay = Receiver.count_documents({"Contents": "Books", "Storage_Type":"Gaylord"})
+    total_books_tote = Receiver.count_documents({"Contents": "Books", "Storage_Type":"Tote"})
+    total_media_gay = Receiver.count_documents({"Contents": "Media", "Storage_Type":"Gaylord"})
+    total_media_tote = Receiver.count_documents({"Contents": "Media", "Storage_Type":"Tote"})
+    total_sgw_gay = Receiver.count_documents({"Contents": "Collectables", "Storage_Type":"Gaylord"})
+    total_sgw_tote = Receiver.count_documents({"Contents": "Collectables", "Storage_Type":"Tote"})
+    total_jewlery_gay = Jewlery_Received.count_documents({"Contents": "Jewelry", "Storage_Type":"Gaylord"})
+    total_jewlery_tote = Jewlery_Received.count_documents({"Contents": "Jewelry", "Storage_Type":"Tote"})
     ### Processed But not submitted
-    toat_review_books = processor_revCollection.count_documents({"Contents": "Books"})
-    toat_review_media = processor_revCollection.count_documents({"Contents": "Media"})
-    toat_review_jewlery = jewlery_revCollection.count_documents({"Contents": "Jewelry"})
-    toat_review_sgw = processor_revCollection.count_documents({"Contents": "Collectables"})
+    toat_review_books = Processor_Review.count_documents({"Contents": "Books"})
+    toat_review_media = Processor_Review.count_documents({"Contents": "Media"})
+    toat_review_jewlery = Jewlery_Review.count_documents({"Contents": "Jewelry"})
+    toat_review_sgw = Processor_Review.count_documents({"Contents": "Collectables"})
 
     Total_to_process_gay = total_books_gay + total_media_gay + total_sgw_gay + total_jewlery_gay
     Total_to_process_tote =  total_books_tote + total_media_tote + total_sgw_tote + total_jewlery_tote
