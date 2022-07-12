@@ -10,8 +10,7 @@ from pymongo import MongoClient
 import pymongo
 import random
 ### Mong DB ###
-
-# TODO:  Cleanup, Add book View, Better Templates, Add all of Feature Request
+# TODO:   Add all of Feature Request
 
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT_Test"]
 Truck_Receiver_DB = warehouse_db["Truck_Receiver_DB"]
@@ -23,8 +22,8 @@ Processor_Review_DB = warehouse_db["Processor_Review_DB"]
 Jewelry_DB = warehouse_db["Jewelry_DB"]
 Jewelry_Review_DB = warehouse_db["Jewelry_Review_DB"]
 
-#Books_Media_DB = warehouse_db["Books_Media_DB"]
-#Book_Media_Review_DB = warehouse_db["Book_Media_Review_DB"]
+Books_Media_DB = warehouse_db["Books_Media_DB"]
+Book_Media_Review_DB = warehouse_db["Book_Media_Review_DB"]
 
 Finished_DB = warehouse_db["Finished_DB"]
 
@@ -52,13 +51,19 @@ date_proc_format = str(today)
 ######################
 
 
-def db_post(post, isJewlery):  # Receving Document
+def db_post(post, isJewlery, isBooks):  # Receving Document
     if post['Storage_Type'] != '':
         if isJewlery == True:
             x = 0
             while x < int(post['Quantity']):
                 post['_id'] = random.random()
                 Jewelry_DB.insert_one(post)
+                x += 1
+        elif isBooks == True:
+            x = 0
+            while x < int(post['Quantity']):
+                post['_id'] = random.random()
+                Books_Media_DB.insert_one(post)
                 x += 1
         else:
             x = 0
@@ -102,10 +107,10 @@ def rec():
             'Contents': ITEM_CONTENTS,
             'Problems': PROBLEM_FORM,
         }
-        if request.form['item_contents'] != 'Jewelry':
-            db_post(post=data_post, isJewlery=False)
-        else:
-            db_post(post=data_post, isJewlery=True)
+        if request.form['item_contents'] == 'Jewelry':
+            db_post(post=data_post, isJewlery=True, isBooks=False)
+        elif request.form['item_contents'] == 'Books':
+            db_post(post=data_post, isJewlery=False, isBooks=True)
 
     return template.render()
 
@@ -159,23 +164,21 @@ def proc_data():
             cat_selected = CONTENTS
             store_selected = STORE_NUMBER
         else:
-
-            date_selected = request.form['date_select']
             cat_selected = request.form['storage_type']
             store_selected = request.form['store_number']
+            storage_selected = request.form['storage_type_1']
 
+        storage_selected = request.form['storage_type_1']
         if cat_selected != "" and store_selected != "":
-            proc_query = {"Date_Received": date_selected,
-                          'Store_Number': store_selected, 'Contents': cat_selected}
+            proc_query = {'Store_Number': store_selected, 'Storage_Type': storage_selected,
+                          'Contents': cat_selected}
         elif cat_selected != "" or store_selected != "":
             if cat_selected != "":
-                proc_query = {"Date_Received": date_selected,
-                              'Contents': cat_selected}
+                proc_query = {'Contents': cat_selected,
+                              'Storage_Type': storage_selected, }
             else:
-                proc_query = {"Date_Received": date_selected,
-                              'Store_Number': store_selected}
-        else:
-            proc_query = {"Date_Received": date_selected}
+                proc_query = {'Store_Number': store_selected,
+                              'Storage_Type': storage_selected, }
 
         proc_documents = Truck_Receiver_DB.find(proc_query)
 
@@ -336,9 +339,110 @@ def jewl_rev():
             return template.render(data=REV_documents)
 
     return template.render(data=REV_documents)
+############################################
 
 
+@app.route('/books', methods=['POST', 'GET'])  # Reciving finished post
+def books():
+    template = jinja_env.get_template('books_main.html')
+    return template.render(date=date_proc_format)
+
+
+@app.route('/books_data', methods=['POST', 'GET'])  # Reciving finished post
+def books_data():
+    template = jinja_env.get_template('books_data.html')
+    if request.method == 'POST':
+        if request.form['summited'] == 'yes':
+            ID = request.form['ID']
+            STORAGE = request.form['STORAGE']
+            CONTENTS = request.form['CONTENTS']
+            DATE_RECEIVED = request.form['DATE_RECEIVED']
+            STORE_NUMBER = request.form['STORE_NUMBER']
+            MANIFEST_NUMBER = request.form['manifest_number_form']
+            PROBLEMS = request.form['problem_form']
+            DATE_PROSESSED = date_proc_format
+
+            # Delete post
+            delquery = {"_id": float(ID)}
+            Books_Media_DB.delete_one(delquery)
+            # add post to rev data
+            New_Post = {
+                '_id': random.random(),
+                'Storage_Type': STORAGE,
+                'Date_Received': date_proc_format,
+                'Date_Processed': DATE_PROSESSED,
+                'MANIFEST_NUMBER': MANIFEST_NUMBER,
+                'Store_Number': STORE_NUMBER,
+                'Contents': CONTENTS,
+                'Problems': PROBLEMS,
+            }
+            Book_Media_Review_DB.insert_one(New_Post)
+            date_selected = DATE_RECEIVED
+            cat_selected = CONTENTS
+            store_selected = STORE_NUMBER
+        else:
+            cat_selected = request.form['storage_type']
+            store_selected = request.form['store_number']
+            storage_selected = request.form['storage_type_1']
+
+        storage_selected = request.form['storage_type_1']
+        if cat_selected != "" and store_selected != "":
+            proc_query = {'Store_Number': store_selected, 'Storage_Type': storage_selected,
+                          'Contents': cat_selected}
+        elif cat_selected != "" or store_selected != "":
+            if cat_selected != "":
+                proc_query = {'Contents': cat_selected,
+                              'Storage_Type': storage_selected, }
+            else:
+                proc_query = {'Store_Number': store_selected,
+                              'Storage_Type': storage_selected, }
+
+        proc_documents = Books_Media_DB.find(proc_query)
+
+        return template.render(data=proc_documents)
+    return template.render()
+
+
+@app.route('/books_rev', methods=['POST', 'GET'])  # Reciving finished post
+def books_rev():
+    template = jinja_env.get_template('books_rev.html')
+    REV_documents = Book_Media_Review_DB.find()
+    if request.method == 'POST':
+        ID = request.form['ID']
+        STORAGE = request.form['STORAGE']
+        CONTENTS = request.form['CONTENTS']
+        DATE_RECEIVED = request.form['DATE_RECEIVED']
+        STORE_NUMBER = request.form['STORE_NUMBER']
+        MANIFEST_NUMBER = request.form['manifest_number_form']
+        PROBLEMS = request.form['problem_form']
+        DATE_PROSESSED = date_proc_format
+
+        post = {
+            '_id': random.random(),
+            'Storage_Type': STORAGE,
+            'Date_Received': date_proc_format,
+            'Date_Processed': DATE_PROSESSED,
+            'MANIFEST_NUMBER': MANIFEST_NUMBER,
+            'Store_Number': STORE_NUMBER,
+            'Contents': CONTENTS,
+            'Problems': PROBLEMS,
+        }
+        if request.form["test"] == 'Undo Processing':
+            proc_query = {"_id": float(ID)}
+            delete_one = Book_Media_Review_DB.delete_one(proc_query)
+            move = Truck_Receiver_DB.insert_one(post)
+            return template.render(data=REV_documents)
+        else:
+            proc_query = {"_id": float(ID)}
+            delete_one = Book_Media_Review_DB.delete_one(proc_query)
+            Finished_DB.insert_one(post)
+            return template.render(data=REV_documents)
+
+    return template.render(data=REV_documents)
+##########################################################
 # Reciving finished post
+
+
 @app.route('/view_jewlery_main', methods=['POST', 'GET'])
 def view_jewlery_main():
     template = jinja_env.get_template('jewl_view_main.html')

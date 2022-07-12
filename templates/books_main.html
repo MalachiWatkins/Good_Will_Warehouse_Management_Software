@@ -3,15 +3,17 @@
 {% block body %}
 <center>
   <header style="color:White">
-    <p style="font-size:50px;color:white">Shop Goodwill Processing</p>
+    <p style="font-size:50px;color:white">Book Processing</p>
   </header>
-  <form class="invscontainer" action="/proc_data" method="post">
+  <form class="invscontainer" action="/books_data" method="post">
     <div class="invscontainer">
       <div class="form-group" style="font-size:20px;color:white;padding-bottom:30px">
         <label for=""> Contents</label>
         <input type="hidden" name="summited" value="no"></input>
         <select class="form-control" id="catigory search" name="storage_type">
-          <option>Collectables</option>
+          <option>Please Select Item Contents</option>
+          <option>Books</option>
+          <option>Media</option>
         </select>
       </div>
       <div class="form-group" style="font-size:20px;color:white;padding-bottom:30px">
