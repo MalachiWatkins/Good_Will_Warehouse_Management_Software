@@ -2,62 +2,58 @@
 
 {% block body %}
 <center>
-<header style="color:White">
-  <p style="font-size:50px;color:white">Jewelry Processing</p>
+  <header style="color:White">
+    <p style="font-size:50px;color:white">Jewelry Processing</p>
 
-</header>
-<form class="invscontainer" action="/jewl_data" method="post">
-  <div class="invscontainer">
-    <label for="start" style="font-size:20px;color:white;padding-bottom:20px">Select Date for Prosessing: </label>
+  </header>
+  <form class="invscontainer" action="/jewl_data" method="post">
+    <div class="invscontainer">
+      <div class="form-group" style="font-size:20px;color:white;padding-bottom:30px">
+        <label for=""> Filters </label>
+        <input type="hidden" name="summited" value="no"></input>
+        <select class="form-control" id="catigory search" name="storage_type">
+          <option>Jewelry</option>
+        </select>
+      </div>
+      <div class="form-group" style="font-size:20px;color:white">
+        <label for=""> Store Number </label>
+        <input type="hidden" name="summited" value="no"></input>
+        <select class="form-control" id="catigory search" name="store_number">
+          <option>Please Select a Store Number</option>
+          <!-- Add 000 as no store-->
+          <option></option>
+          <option>100</option>
+          <option>101</option>
+          <option>103</option>
+          <option>108</option>
+          <option>110</option>
+          <option>118</option>
+          <option>119</option>
+          <option>123</option>
+          <option>131</option>
+          <option>202</option>
+          <option>204</option>
+          <option>205</option>
+          <option>206</option>
+          <option>211</option>
+          <option>212</option>
+          <option>214</option>
+          <option>220</option>
+          <option>222</option>
+          <option>224</option>
+          <option>BStock</option>
+          <option>CW 100</option>
+          <option>E-Commerce</option>
+          <option>Shared computer Refurb</option>
+          <option>SubTropolis</option>
+        </select>
+      </div>
 
-    <input type="date" id="start" name="date_select" value="{{ date }}" min="2022-01-01" max="2030-12-31">
-    <div class="form-group"style="font-size:20px;color:white;padding-bottom:30px">
-      <label for="" > Filters </label>
-      <input type="hidden" name="summited" value="no"></input>
-      <select class="form-control" id="catigory search" name="storage_type">
-        <option></option>
-        <option>Jewelry</option
-      </select>
+      <input class="btn btn-primary" type="submit" value="Search">
+
     </div>
 
-    <p>TEST </p>
-    <div class="form-group"style="font-size:20px;color:white">
-      <label for="" > Store Number </label>
-      <input type="hidden" name="summited" value="no"></input>
-      <select class="form-control" id="catigory search" name="store_number" >
-        <option></option>
-        <option>100</option>
-        <option>101</option>
-        <option>103</option>
-        <option>108</option>
-        <option>110</option>
-        <option>118</option>
-        <option>119</option>
-        <option>123</option>
-        <option>131</option>
-        <option>202</option>
-        <option>204</option>
-        <option>205</option>
-        <option>206</option>
-        <option>211</option>
-        <option>212</option>
-        <option>214</option>
-        <option>220</option>
-        <option>222</option>
-        <option>224</option>
-        <option>BStock</option>
-        <option>CW 100</option>
-        <option>E-Commerce</option>
-        <option>Shared computer Refurb</option>
-        <option>SubTropolis</option>
-      </select>
-    </div>
+  </form>
+  <center>
 
-    <input class="btn btn-primary" type="submit" value="Search">
-
-  </div>
-
-</form>
-<center>
-
-{% endblock %}
+    {% endblock %}

@@ -1,0 +1,7 @@
+Project notes
+
+As of right now the main goal is getting everything funclonal then i want to reabuild the whole site in django usuing vue js and a no SQL DB (START ASAP)
+
+
+For the current production version using flask
+add a no date search option,
