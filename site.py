@@ -11,17 +11,18 @@ import pymongo
 import random
 ### Mong DB ###
 
-
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT"]
 user = warehouse_db["User"]
 Receiver = warehouse_db["Receiver"]
 
 Processor_Review = warehouse_db["Processor_Review"]
 
+Books_Media_Received = warehouse_db["Books_Media_Received"]
+Books_Media_Review = warehouse_db["Books_Media_Review"]
+
 Jewlery_Received = warehouse_db["Jewlery_Received"]
 Jewlery_Review = warehouse_db["Jewlery_Review"]
 
-Book_Received = warehouse_db["Book_Received"]
 
 Ready_For_Logging = warehouse_db["Ready_For_Logging"]
 Jewlery_Ready_For_Logging = warehouse_db["Jewlery_Ready_For_Logging"]
@@ -47,13 +48,20 @@ date_proc_format = str(today)
 
 
 #### Chooses Jewelry Collection if submitted is jewlery ###
-def db_post(post, isJewlery):
+def db_post(post, isJewlery,isBooks_Media):
     if post['Storage_Type'] != '':
         if isJewlery == True:
             x=0
             while x < int(post['Quantity']):
                 post['_id'] = random.random()
                 Jewlery_Received.insert_one(post)
+                x+=1
+        elif isBooks_Media == True:
+            print(32)
+            x=0
+            while x < int(post['Quantity']):
+                post['_id'] = random.random()
+                Books_Media_Received.insert_one(post)
                 x+=1
         else:
             x=0
@@ -97,10 +105,14 @@ def rec():
             'Contents': ITEM_CONTENTS,
             'Problems': PROBLEM_FORM,
         }
-        if request.form['item_contents'] != 'Jewelry':
-            db_post(post=data_post, isJewlery=False)
+        if request.form['item_contents'] == 'Jewlery':
+            db_post(post=data_post, isJewlery=f, isBooks_Media=False)
+            print('JEwl')
+        elif request.form['item_contents'] == 'Books' or request.form['item_contents'] == 'Media':
+            print('Books')
+            db_post(post=data_post, isJewlery=False, isBooks_Media=True)
         else:
-            db_post(post=data_post, isJewlery=True)
+            db_post(post=data_post, isJewlery=False, isBooks_Media=False)
 
     return template.render()
 
@@ -113,132 +125,137 @@ def rec_finished():
 ######################################################################
 #################### Processor #######################################
 ######################################################################
-
-
-@app.route('/proc', methods=['POST', 'GET'])  # Processing Landing
-def proc_main():
-    template = jinja_env.get_template('proc_main.html')
+@app.route('/proc', methods=['POST', 'GET'])  # Main Processor View
+def proc():
+    template = jinja_env.get_template('processor_main.html')
     return template.render(date=date_proc_format)
 
-
-@app.route('/proc_data', methods=['POST', 'GET'])  # Processing Data Viewing
-def proc_data():
-    template = jinja_env.get_template('proc_data.html')
+@app.route('/processing', methods=['POST', 'GET'])  # Processing Data Viewing
+def processing():
+    Template = ['data.html']
+    Document_Data = []
+    Item_Cat = []
     if request.method == 'POST':
-        if request.form['summited'] == 'yes': ### Checks if data is Submitted and sends it to review
-            ##### Gets form Data and creates a post with it #####
-            ID = request.form['ID']
-            STORAGE = request.form['STORAGE']
-            CONTENTS = request.form['CONTENTS']
-            DATE_RECEIVED = request.form['DATE_RECEIVED']
-            STORE_NUMBER = request.form['STORE_NUMBER']
-            MANIFEST_NUMBER = request.form['manifest_number_form']
-            PROBLEMS = request.form['problem_form']
-            DATE_PROSESSED = date_proc_format
+        cat_selected = request.form['storage_type']
+        def data(collection,Review_Collection):
+            if request.form['summited'] == 'yes': ### Checks if data is Submitted and sends it to review
+                ##### Gets form Data and creates a post with it #####
+                ID = request.form['ID']
+                STORAGE = request.form['storage_type']
+                CONTENTS = request.form['CONTENTS']
+                DATE_RECEIVED = request.form['DATE_RECEIVED']
+                STORE_NUMBER = request.form['STORE_NUMBER']
+                MANIFEST_NUMBER = request.form['manifest_number_form']
+                PROBLEMS = request.form['problem_form']
+                DATE_PROSESSED = date_proc_format
 
-            # Deletes Post and addes it to the Review collecion for viewing with a new ID
-            delquery = { "_id": float(ID) }
-            Receiver.delete_one(delquery)
-            New_Post = {
-                '_id': random.random(),
-                'Storage_Type': STORAGE,
-                'Date_Received':date_proc_format,
-                'Date_Processed': DATE_PROSESSED,
-                'MANIFEST_NUMBER': MANIFEST_NUMBER,
-                'Store_Number': STORE_NUMBER,
-                'Contents': CONTENTS,
-                'Problems': PROBLEMS,
+                PROCESSED_BY = request.form['processed_by']
+                SEAL_NUMBER = request.form['seal_number_form']
 
-            }
-            Processor_Review.insert_one(New_Post)
-            date_selected = DATE_RECEIVED
-            cat_selected = CONTENTS
-            store_selected = STORE_NUMBER
-        else: ### If request method was not post
 
-            date_selected = request.form['date_select']
-            cat_selected = request.form['storage_type']
-            store_selected = request.form['store_number']
+                delquery = { "_id": float(ID) }
 
-        if cat_selected != "" and store_selected != "":
-            proc_query = {"Date_Received": date_selected,
-                          'Store_Number': store_selected, 'Contents': cat_selected}
-        elif cat_selected != "" or store_selected != "":
-            if cat_selected != "":
-                proc_query = {"Date_Received": date_selected,
-                              'Contents': cat_selected}
+                # Deletes Post and addes it to the Review collecion for viewing with a new ID
+                collection.delete_one(delquery)
+
+                New_Post = {
+                    '_id': random.random(),
+                    'Storage_Type': STORAGE,
+                    'Date_Received':date_proc_format,
+                    'Date_Processed': DATE_PROSESSED,
+                    'MANIFEST_NUMBER': MANIFEST_NUMBER,
+                    'Store_Number': STORE_NUMBER,
+                    'Contents': CONTENTS,
+                    'Problems': PROBLEMS,
+                    'Processed_By': PROCESSED_BY,
+                    'Seal_Number': SEAL_NUMBER,
+                    }
+
+                Review_Collection.insert_one(New_Post)
+
+                date_selected = DATE_RECEIVED
+                contents = CONTENTS
+                store_selected = STORE_NUMBER
+            else: ### If request method was not post ###
+                date_selected = request.form['date_select']#####
+                cat_selected = request.form['storage_type']####   # Gets filters from main view #
+                store_selected = request.form['store_number']###
+            date_fiter = request.form['date_filter']
+            if date_fiter == 'Dont use Date':
+                if store_selected == '':
+                    Queryed_Document = collection.find()
+                    Document_Data.append(Queryed_Document)
+                    print(Document_Data)
+                else:
+                    Query == {'Store_Number': store_selected}
+                    Queryed_Document = collection.find(Query)
+                    Document_Data.append(Queryed_Document)
+                    print(Document_Data)
             else:
-                proc_query = {"Date_Received": date_selected,
-                              'Store_Number': store_selected}
+                if store_selected == '':
+                    Query = {'Date_Received': date_selected}
+                    Queryed_Document = collection.find(Query)
+                    Document_Data.append(Queryed_Document)
+                    print(Document_Data)
+                else:
+                    Query = {'Date_Received': date_selected,'Store_Number': store_selected }
+                    Queryed_Document = collection.find(Query)
+                    Document_Data.append(Queryed_Document)
+                    print(Document_Data)
+            return
+
+        if cat_selected == 'Jewelry':
+            Selected_collect = Jewlery_Received
+            Selected_Review = Jewlery_Review
+        elif cat_selected == 'Books' or cat_selected == 'Media':
+            Selected_collect = Books_Media_Received
+            Selected_Review = Books_Media_Review
         else:
-            proc_query = {"Date_Received": date_selected}
+            Selected_collect = Receiver
+            Selected_Review = Processor_Review
+        data(collection=Selected_collect,Review_Collection=Selected_Review)
 
-        proc_documents = Receiver.find(proc_query)
-
-        return template.render(data=proc_documents)
-    return template.render()
-
-
-@app.route('/proc_rev', methods=['POST', 'GET'])  #  Processing Data Reviewing
-def proc_rev():
-    template = jinja_env.get_template('proc_rev.html')
-    REV_documents = Processor_Review.find()
-    if request.method == 'POST':
-        ID = request.form['ID']
-        STORAGE = request.form['STORAGE']
-        CONTENTS = request.form['CONTENTS']
-        DATE_RECEIVED = request.form['DATE_RECEIVED']
-        STORE_NUMBER = request.form['STORE_NUMBER']
-        MANIFEST_NUMBER = request.form['manifest_number_form']
-        PROBLEMS = request.form['problem_form']
-        DATE_PROSESSED = date_proc_format
-        try:
-            testing = request.form['test']
-        except:
-            testing = 'null'
-
-        post = {
-            '_id': random.random(),
-            'Storage_Type': STORAGE,
-            'Date_Received':date_proc_format,
-            'Date_Processed': DATE_PROSESSED,
-            'MANIFEST_NUMBER': MANIFEST_NUMBER,
-            'Store_Number': STORE_NUMBER,
-            'Contents': CONTENTS,
-            'Problems': PROBLEMS,
-        }
-        if request.form["test"] == 'Undo Processing':
-            proc_query = {"_id": float(ID)}
-            delete_one = Processor_Review.delete_one(proc_query)
-            move = Receiver.insert_one(post)
-            return template.render(data=REV_documents)
-        else:
-            proc_query = {"_id": float(ID)}
-            delete_one = Processor_Review.delete_one(proc_query)
-            Ready_For_Logging.insert_one(post)
-            return template.render(data=REV_documents)
-
-
-    return template.render(data=REV_documents)
+        template = jinja_env.get_template(Template[0])
+        return template.render(data=Document_Data[0])
+    template = jinja_env.get_template(Template[0])
+    return template.render(data=Document_Data)
 
 
 
+@app.route('/rev', methods=['POST', 'GET'])  #  Processing Data Reviewing
+def rev():
+    contents = request.form['ye']  # Will not work with anything but test I have no Clue why lol
+    if contents == 'Collectables':
+        collecion_selected = Receiver.find()
+        Review_Documents = Processor_Review.find()
+    elif contents == 'Books':
+        collecion_selected = Books_Media_Received.find()
+        Review_Documents = Books_Media_Review.find()
+    elif contents == 'Media':
+        collecion_selected = Books_Media_Received.find()
+        Review_Documents = Books_Media_Review.find()
+    else:
+        collecion_selected = Jewlery_Received.find()
+        Review_Documents = Jewlery_Review.find()
 
-######################################################################
-#################### Jewelry ########################################
-######################################################################
+    template = jinja_env.get_template('review.html')
+    def review(collection,Review_Collection):
+        if request.method == 'POST':
+            print(request.form["test"])
+            contents = request.form['CONTENTS']  # Will not work with anything but test I have no Clue why lol
+            if contents == 'Collectables':
+                collecion_selected = Receiver.find()
+                Review_Documents = Processor_Review.find()
+            elif contents == 'Books':
+                collecion_selected = Books_Media_Received.find()
+                Review_Documents = Books_Media_Review.find()
+            elif contents == 'Media':
+                collecion_selected = Books_Media_Received.find()
+                Review_Documents = Books_Media_Review.find()
+            else:
+                collecion_selected = Jewlery_Received.find()
+                Review_Documents = Jewlery_Review.find()
 
-@app.route('/jewl', methods=['POST', 'GET'])  # Reciving finished post
-def jewl():
-    template = jinja_env.get_template('jewl_main.html')
-    return template.render(date=date_proc_format)
-
-
-@app.route('/jewl_data', methods=['POST', 'GET'])  # Reciving finished post
-def jewl_data():
-    template = jinja_env.get_template('jewl_data.html')
-    if request.method == 'POST':
-        if request.form['summited'] == 'yes':
             ID = request.form['ID']
             STORAGE = request.form['STORAGE']
             CONTENTS = request.form['CONTENTS']
@@ -249,11 +266,8 @@ def jewl_data():
             DATE_PROSESSED = date_proc_format
             PROCESSED_BY = request.form['processed_by']
             SEAL_NUMBER = request.form['seal_number_form']
-            # Delete post
-            delquery = { "_id": float(ID) }
-            Jewlery_Received.delete_one(delquery)
-            # add post to rev data
-            New_Post = {
+
+            post = {
                 '_id': random.random(),
                 'Storage_Type': STORAGE,
                 'Date_Received':date_proc_format,
@@ -264,82 +278,30 @@ def jewl_data():
                 'Problems': PROBLEMS,
                 'Processed_By': PROCESSED_BY,
                 'Seal_Number': SEAL_NUMBER,
-
             }
-            Jewlery_Review.insert_one(New_Post)
-            date_selected = DATE_RECEIVED
-            cat_selected = CONTENTS
-            store_selected = STORE_NUMBER
-        else:
-            date_selected = request.form['date_select']
-            cat_selected = request.form['storage_type']
-            store_selected = request.form['store_number']
 
-        if cat_selected != "" and store_selected != "":
-            proc_query = {"Date_Received": date_selected,
-                          'Store_Number': store_selected, 'Contents': cat_selected}
-        elif cat_selected != "" or store_selected != "":
-            if cat_selected != "":
-                proc_query = {"Date_Received": date_selected,
-                              'Contents': cat_selected}
+            if request.form["ye"] == 'Undo Processing':
+                proc_query = {"_id": float(ID)}
+                delete_one = Review_Collection.delete_one(proc_query)
+                move = collection.insert_one(post)
+
+                return template.render(data=Review_Documents)
             else:
-                proc_query = {"Date_Received": date_selected,
-                              'Store_Number': store_selected}
-        else:
-            proc_query = {"Date_Received": date_selected}
-
-        proc_documents = Jewlery_Received.find(proc_query)
-
-        return template.render(data=proc_documents)
-    return template.render()
+                proc_query = {"_id": float(ID)}
+                delete_one = Review_Collection.delete_one(proc_query)
+                Ready_For_Logging.insert_one(post)
+                return template.render(data=Review_Documents)
 
 
-@app.route('/jewl_rev', methods=['POST', 'GET'])  # Reciving finished post
-def jewl_rev():
-    template = jinja_env.get_template('jewl_rev.html')
-    REV_documents = Jewlery_Review.find()
-    if request.method == 'POST':
-        ID = request.form['ID']
-        STORAGE = request.form['STORAGE']
-        CONTENTS = request.form['CONTENTS']
-        DATE_RECEIVED = request.form['DATE_RECEIVED']
-        STORE_NUMBER = request.form['STORE_NUMBER']
-        MANIFEST_NUMBER = request.form['manifest_number_form']
-        PROBLEMS = request.form['problem_form']
-        DATE_PROSESSED = date_proc_format
-        PROCESSED_BY = request.form['processed_by']
-        SEAL_NUMBER = request.form['seal_number_form']
-        try:
-            testing = request.form['test']
-        except:
-            testing = 'null'
-
-        post = {
-            '_id': random.random(),
-            'Storage_Type': STORAGE,
-            'Date_Received':date_proc_format,
-            'Date_Processed': DATE_PROSESSED,
-            'MANIFEST_NUMBER': MANIFEST_NUMBER,
-            'Store_Number': STORE_NUMBER,
-            'Contents': CONTENTS,
-            'Problems': PROBLEMS,
-            'Processed_By': PROCESSED_BY,
-            'Seal_Number': SEAL_NUMBER,
-
-        }
-        if request.form["test"] == 'Undo Processing':
-            proc_query = {"_id": float(ID)}
-            delete_one = Jewlery_Review.delete_one(proc_query)
-            Jewlery_Received.insert_one(post)
-            return template.render(data=REV_documents)
-        else:
-            proc_query = {"_id": float(ID)}
-            delete_one = Jewlery_Review.delete_one(proc_query)
-            Jewlery_Ready_For_Logging.insert_one(post)
-            return template.render(data=REV_documents)
+        review(collection=collecion_selected,Review_Collection=Review_Documents)
+    return template.render(data=Review_Documents)
 
 
-    return template.render(data=REV_documents)
+
+
+######################################################################
+#################### Jewelry ########################################
+######################################################################
 
 @app.route('/view_jewlery_main', methods=['POST', 'GET'])  # Reciving finished post
 def view_jewlery_main():
@@ -406,5 +368,3 @@ def stats():
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=1024)
-
-#   http://sponge.icarus.io/?date=(Date goes here in YYYY-MM-DD form)

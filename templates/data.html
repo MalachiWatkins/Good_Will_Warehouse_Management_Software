@@ -2,11 +2,24 @@
 
 {% block body %}
 <center>
-  <form class="" action="/proc_rev" method="get">
+  <form class="" action="/rev" method="post">
     <div class="" style="padding-top:15px">
-      <input style="" class="btn btn-primary" type="submit" value="Review">
+      <div class="">
+        <div class="form-group"style="font-size:20px;color:white;padding-bottom:30px;width:7%">
+          <label for="" >Contents to Review </label>
+          <input type="hidden" name="summited" value="no"></input>
+          <select class="form-control" id="catigory search" name="ye">
+            <option></option>
+            <option>Collectables</option>
+            <option>Books</option>
+            <option>Media</option>
+            <option>Jewelry</option>
+          </select>
+        </div>
+      </div>
     </div>
-
+    <input style="" class="btn btn-primary" type="submit" value="Review">
+    <input type="hidden" name="rev" value="yes"></input>
   </form>
 </center>
 
@@ -18,11 +31,12 @@
     <div class="invscontainer">
       <div class="card">
         <div class="card-header">
-          <form class="" action="/proc_data" method="post" name="">
+          <form class="" action="/processing" method="post" name="">
           <input type="hidden" name="summited" value="yes"></input>
           <input type="hidden" name="ID" value="{{ post._id }}"></input>
+          <input type="hidden" name="date_filter" value=""></input>
           <p style="font-size:25px" name='hello' >Storage Type: {{ post.Storage_Type }}</p>
-          <input type="hidden" name="STORAGE" value="{{ post.Storage_Type }}"></input>
+          <input type="hidden" name="storage_type" value="{{ post.Storage_Type }}"></input>
           <div class="card-body">
             <h5 class="card-title">Contents: {{ post.Contents }}</h5>
             <input type="hidden" name="CONTENTS" value="{{ post.Contents}}"></input>
@@ -39,6 +53,18 @@
               <textarea class="form-control" id="" rows="1" name="manifest_number_form"></textarea>
             </div>
 
+            <div class="form-group">
+              <label for="" style="font-size:20px;color:Black"> Processed By </label>
+              <select class="form-control" id="catigory search" name="processed_by">
+        	      <option>Select Here</option>
+                <option>testName</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="font-size:25px">
+              <label for=""> Seal Number </label>
+              <textarea class="form-control" id="" rows="1" name="seal_number_form"></textarea>
+            </div>
             <div class="form-group">
               <label for=""> Problems </label>
               <textarea class="form-control" id="" rows="3" name="problem_form">{{ post.Problems }}</textarea>

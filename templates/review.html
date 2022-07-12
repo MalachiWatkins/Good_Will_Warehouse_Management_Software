@@ -3,7 +3,7 @@
 {% block body %}
 <center>
 
-  <form class="" action="/jewl" method="get">
+  <form class="" action="/proc" method="get">
     <div class="" style="padding-top:15px">
       <input style="" class="btn btn-primary" type="submit" value="Back to Processing">
     </div>
@@ -14,13 +14,13 @@
 
 
   <center>
-    <form class="" action="/jewl_rev" method="post">
+    <form class="" action="/rev" method="post">
 
     {% for post in data %}
     <div class="invscontainer">
       <div class="card">
         <div class="card-header">
-          <form class="" action="/jewl_data" method="post" name="">
+          <form class="" action="/processing" method="post" name="">
           <input type="hidden" name="summited" value="yes"></input>
           <input type="hidden" name="ID" value="{{ post._id }}"></input>
           <p style="font-size:25px" name='hello' >Storage Type: {{ post.Storage_Type }}</p>
@@ -50,8 +50,8 @@
             <label for="" style="font-size:25px"> Problems: {{ post.Problems }}</label>
             <p style=""> </p>
           </div>
-            <input style="" class="btn btn-primary" type="submit" value="Finished and Submit" name="test">
-            <input class="btn btn-primary" type="submit" value="Undo Processing" name="test">
+            <input style="" class="btn btn-primary" type="submit" value="Finished and Submit" name="ye">
+            <input class="btn btn-primary" type="submit" value="Undo Processing" name="ye">
           <p class="card-text"></p>
           </form>
         </div>
