@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block body %}
+<center>
+  <form class="" action="/proc_rev" method="get">
+    <div class="" style="padding-top:15px">
+      <input style="" class="btn btn-primary" type="submit" value="Review">
+    </div>
+
+  </form>
+</center>
+
+{% for post in data %}
+
+  <center>
+
+
+    <div class="invscontainer">
+      <div class="card">
+        <div class="card-header">
+          <form class="" action="/proc_data" method="post" name="">
+          <input type="hidden" name="summited" value="yes"></input>
+          <input type="hidden" name="ID" value="{{ post._id }}"></input>
+          <p style="font-size:25px" name='hello' >Storage Type: {{ post.Storage_Type }}</p>
+          <input type="hidden" name="STORAGE" value="{{ post.Storage_Type }}"></input>
+          <div class="card-body">
+            <h5 class="card-title">Contents: {{ post.Contents }}</h5>
+            <input type="hidden" name="CONTENTS" value="{{ post.Contents}}"></input>
+            <h5 class="card-title">
+              <input type="hidden" name="DATE_RECEIVED" value="{{ post.Date_Received }}"></input>
+              <label for="" style="" id="" >Date Received: {{ post.Date_Received }}
+              </label>
+              <input type="hidden" name="STORE_NUMBER" value="{{ post.Store_Number }}"></input>
+              <p>Store Number: {{post.Store_Number}}</p>
+            </h5>
+
+            <div class="form-group">
+              <label for=""> Manifest Number </label>
+              <textarea class="form-control" id="" rows="1" name="manifest_number_form"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for=""> Problems </label>
+              <textarea class="form-control" id="" rows="3" name="problem_form">{{ post.Problems }}</textarea>
+            </div>
+          </div>
+            <input class="btn btn-primary" type="submit" value="Process">
+          <p class="card-text"></p>
+          </form>
+        </div>
+
+
+      </div>
+    </div>
+
+
+
+  </center>
+
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block body %}
+<center>
+<header style="color:White">
+  <p style="font-size:50px;color:white">View Processed Items</p>
+</header>
+<form class="invscontainer" action="/view_sgw" method="post">
+  <div class="invscontainer">
+    <label for="start" style="font-size:20px;color:white;padding-bottom:20px">Select Date for Prosessing: </label>
+
+    <input type="date" id="start" name="date_select" value="{{ date }}" min="2022-01-01" max="2030-12-31">
+    <input class="btn btn-primary" type="submit" value="Search">
+
+  </div>
+
+</form>
+<center>
+
+{% endblock %}
