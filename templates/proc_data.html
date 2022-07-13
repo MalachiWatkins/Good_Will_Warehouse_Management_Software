@@ -35,6 +35,17 @@
               <input type="hidden" name="STORE_NUMBER" value="{{ post.Store_Number }}"></input>
               <p>Store Number: {{post.Store_Number}}</p>
             </h5>
+            <div class="invscontainer">
+              <div class="form-group">
+                <label for=""style="font-size:20px;color:blackk">Processed By</label>
+                  <select class="form-control" id="storage_type" name="processed_by">
+                    <option>Please Select Your Name</option>
+                    <option>Test Name</option>
+
+                  </select>
+              </div>
+            </div>
+
             <div class="form-group">
               <label for=""> Manifest Number </label>
               <textarea class="form-control" id="" rows="1" name="manifest_number_form"></textarea>

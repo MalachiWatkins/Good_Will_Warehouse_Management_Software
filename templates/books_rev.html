@@ -24,6 +24,7 @@
             <input type="hidden" name="summited" value="yes"></input>
             <input type="hidden" name="ID" value="{{ post._id }}"></input>
             <p style="font-size:25px" name='hello'>Storage Type: {{ post.Storage_Type }}</p>
+            <input type="hidden" name="storage_type_1" value="{{ post.Storage_Type }}"></input>
             <input type="hidden" name="STORAGE" value="{{ post.Storage_Type }}"></input>
             <div class="card-body">
               <h5 class="card-title">Contents: {{ post.Contents }}</h5>
@@ -38,6 +39,10 @@
                 <label for="" style="" id="">Manifest Number: {{ post.MANIFEST_NUMBER }} </label>
 
               </h5>
+              <div class="">
+                <input type="hidden" name="processed_by" value="{{ post.Processed_By }}"></input>
+                <label for="" style="font-size:25px" id="">Processed by: {{ post.Processed_By }} </label>
+              </div>
               <input type="hidden" name="problem_form" value="{{ post.Problems }}"></input>
               <label for="" style="font-size:25px"> Problems: {{ post.Problems }}</label>
               <p style=""> </p>

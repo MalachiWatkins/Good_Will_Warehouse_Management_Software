@@ -166,6 +166,7 @@ def proc_data():
                 'Store_Number': STORE_NUMBER,
                 'Contents': CONTENTS,
                 'Problems': PROBLEMS,
+                'Processed_By': PROCESSED_BY,
             }
             Processor_Review_DB.insert_one(New_Post)
             date_selected = DATE_RECEIVED
@@ -207,6 +208,7 @@ def proc_rev():
         MANIFEST_NUMBER = request.form['manifest_number_form']
         PROBLEMS = request.form['problem_form']
         DATE_PROSESSED = date_proc_format
+        PROCESSED_BY = request.form['processed_by']
 
         try:
             testing = request.form['test']
@@ -222,6 +224,7 @@ def proc_rev():
             'Store_Number': STORE_NUMBER,
             'Contents': CONTENTS,
             'Problems': PROBLEMS,
+            'Processed_By': PROCESSED_BY,
         }
         if request.form["test"] == 'Undo Processing':
             proc_query = {"_id": float(ID)}
@@ -370,6 +373,7 @@ def books_data():
             MANIFEST_NUMBER = request.form['manifest_number_form']
             PROBLEMS = request.form['problem_form']
             DATE_PROSESSED = date_proc_format
+            PROCESSED_BY = request.form['processed_by']
 
             # Delete post
             delquery = {"_id": float(ID)}
@@ -384,6 +388,7 @@ def books_data():
                 'Store_Number': STORE_NUMBER,
                 'Contents': CONTENTS,
                 'Problems': PROBLEMS,
+                'Processed_By': PROCESSED_BY,
             }
             Book_Media_Review_DB.insert_one(New_Post)
             date_selected = DATE_RECEIVED
@@ -425,6 +430,8 @@ def books_rev():
         MANIFEST_NUMBER = request.form['manifest_number_form']
         PROBLEMS = request.form['problem_form']
         DATE_PROSESSED = date_proc_format
+        PROCESSED_BY = request.form['processed_by']
+
 
         post = {
             '_id': random.random(),
@@ -435,6 +442,7 @@ def books_rev():
             'Store_Number': STORE_NUMBER,
             'Contents': CONTENTS,
             'Problems': PROBLEMS,
+            'Processed_By': PROCESSED_BY,
         }
         if request.form["test"] == 'Undo Processing':
             proc_query = {"_id": float(ID)}
