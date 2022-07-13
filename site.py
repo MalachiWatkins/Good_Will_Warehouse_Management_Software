@@ -10,7 +10,12 @@ from pymongo import MongoClient
 import pymongo
 import random
 ### Mong DB ###
-# TODO:   Add all of Feature Request
+# TODO:   Add all of Feature Request, Create DB Transfer Script, and test Funconality, add name drop down, option for no store number add total gaylord and totes to the top of processing
+
+# Add Statistics page
+# for Ceo: All inventory
+# for Gary: only Processed Info with issues
+# stores both processed and unprocessed
 
 warehouse_db = cluster["WAREHOUSE_MANAGEMENT_Test"]
 Truck_Receiver_DB = warehouse_db["Truck_Receiver_DB"]
@@ -51,15 +56,15 @@ date_proc_format = str(today)
 ######################
 
 
-def db_post(post, isJewlery, isBooks):  # Receving Document
+def db_post(post, isJewlery, isBooks, isSGW):  # Receving Document
     if post['Storage_Type'] != '':
-        if isJewlery == True:
+        if isJewlery == True and isBooks == False and isSGW == False:
             x = 0
             while x < int(post['Quantity']):
                 post['_id'] = random.random()
                 Jewelry_DB.insert_one(post)
                 x += 1
-        elif isBooks == True:
+        elif isJewlery == False and isBooks == True and isSGW == False:
             x = 0
             while x < int(post['Quantity']):
                 post['_id'] = random.random()
@@ -108,9 +113,11 @@ def rec():
             'Problems': PROBLEM_FORM,
         }
         if request.form['item_contents'] == 'Jewelry':
-            db_post(post=data_post, isJewlery=True, isBooks=False)
+            db_post(post=data_post, isJewlery=True, isBooks=False, isSGW=False)
         elif request.form['item_contents'] == 'Books':
-            db_post(post=data_post, isJewlery=False, isBooks=True)
+            db_post(post=data_post, isJewlery=False, isBooks=True, isSGW=False)
+        else:
+            db_post(post=data_post, isJewlery=False, isBooks=False, isSGW=True)
 
     return template.render()
 
@@ -144,6 +151,7 @@ def proc_data():
             MANIFEST_NUMBER = request.form['manifest_number_form']
             PROBLEMS = request.form['problem_form']
             DATE_PROSESSED = date_proc_format
+            PROCESSED_BY = request.form['processed_by']
 
             # Delete post
             delquery = {"_id": float(ID)}
@@ -181,8 +189,8 @@ def proc_data():
                               'Storage_Type': storage_selected, }
 
         proc_documents = Truck_Receiver_DB.find(proc_query)
-
-        return template.render(data=proc_documents)
+        document_count =  Truck_Receiver_DB.count_documents(proc_query)
+        return template.render(data=proc_documents, total=document_count, type=storage_selected )
     return template.render()
 
 
@@ -199,6 +207,7 @@ def proc_rev():
         MANIFEST_NUMBER = request.form['manifest_number_form']
         PROBLEMS = request.form['problem_form']
         DATE_PROSESSED = date_proc_format
+
         try:
             testing = request.form['test']
         except:
@@ -289,8 +298,8 @@ def jewl_data():
                 proc_query = {'Store_Number': store_selected}
 
         proc_documents = Jewelry_DB.find(proc_query)
-
-        return template.render(data=proc_documents)
+        document_count =  Jewelry_DB.count_documents(proc_query)
+        return template.render(data=proc_documents, total=document_count, type=storage_selected )
     return template.render()
 
 
@@ -398,8 +407,8 @@ def books_data():
                               'Storage_Type': storage_selected, }
 
         proc_documents = Books_Media_DB.find(proc_query)
-
-        return template.render(data=proc_documents)
+        document_count =  Books_Media_DB.count_documents(proc_query)
+        return template.render(data=proc_documents, total=document_count, type=storage_selected )
     return template.render()
 
 
