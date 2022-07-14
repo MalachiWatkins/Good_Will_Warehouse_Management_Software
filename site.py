@@ -17,10 +17,9 @@ import random
 # for Gary: only Processed Info with issues
 # stores both processed and unprocessed
 
-warehouse_db = cluster["WAREHOUSE_MANAGEMENT_Test"]
+warehouse_db = cluster["WAREHOUSE_MANAGEMENT_GOODWILL"]
 Truck_Receiver_DB = warehouse_db["Truck_Receiver_DB"]
 
-Processor_DB = warehouse_db["Processor_DB"]
 Processor_Review_DB = warehouse_db["Processor_Review_DB"]
 
 
@@ -497,6 +496,7 @@ def stats():
     sgw_query = {"Contents": "Collectables"}
     jewlery_query = {"Contents": "Jewelry"}
 
+
     total_not_added_to_spreadsheet_books = Finished_DB.count_documents({
         "Contents": "Books"})
     total_not_added_to_spreadsheet_media = Finished_DB.count_documents({
@@ -506,13 +506,13 @@ def stats():
     total_not_added_to_spreadsheet_jewlery = Finished_Jewlery_DB.count_documents({
         "Contents": "Jewelry"})
     # Total Left to process
-    total_books_gay = Truck_Receiver_DB.count_documents(
+    total_books_gay = Books_Media_DB.count_documents(
         {"Contents": "Books", "Storage_Type": "Gaylord"})
-    total_books_tote = Truck_Receiver_DB.count_documents(
+    total_books_tote = Books_Media_DB.count_documents(
         {"Contents": "Books", "Storage_Type": "Tote"})
-    total_media_gay = Truck_Receiver_DB.count_documents(
+    total_media_gay = Books_Media_DB.count_documents(
         {"Contents": "Media", "Storage_Type": "Gaylord"})
-    total_media_tote = Truck_Receiver_DB.count_documents(
+    total_media_tote = Books_Media_DB.count_documents(
         {"Contents": "Media", "Storage_Type": "Tote"})
     total_sgw_gay = Truck_Receiver_DB.count_documents(
         {"Contents": "Collectables", "Storage_Type": "Gaylord"})
@@ -523,9 +523,9 @@ def stats():
     total_jewlery_tote = Jewelry_DB.count_documents(
         {"Contents": "Jewelry", "Storage_Type": "Tote"})
     # Processed But not submitted
-    toat_review_books = Processor_Review_DB.count_documents(
+    toat_review_books = Book_Media_Review_DB.count_documents(
         {"Contents": "Books"})
-    toat_review_media = Processor_Review_DB.count_documents(
+    toat_review_media = Book_Media_Review_DB.count_documents(
         {"Contents": "Media"})
     toat_review_jewlery = Jewelry_Review_DB.count_documents(
         {"Contents": "Jewelry"})
