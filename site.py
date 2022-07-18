@@ -11,13 +11,12 @@ import pymongo
 import random
 ### Mong DB ###
 # TODO:   Add all of Feature Request, Create DB Transfer Script, and test Funconality, add name drop down, option for no store number add total gaylord and totes to the top of processing
-
 # Add Statistics page
 # for Ceo: All inventory
 # for Gary: only Processed Info with issues
 # stores both processed and unprocessed
 
-warehouse_db = cluster["WAREHOUSE_MANAGEMENT_GOODWILL"]
+warehouse_db = cluster["WAREHOUSE_MANAGEMENT_Test"]
 Truck_Receiver_DB = warehouse_db["Truck_Receiver_DB"]
 
 Processor_Review_DB = warehouse_db["Processor_Review_DB"]
@@ -167,7 +166,7 @@ def proc_data():
                 'Problems': PROBLEMS,
                 'Processed_By': PROCESSED_BY,
             }
-            Processor_Review_DB.insert_one(New_Post)
+            Finished_DB.insert_one(New_Post)
             date_selected = DATE_RECEIVED
             cat_selected = CONTENTS
             store_selected = STORE_NUMBER
@@ -192,51 +191,6 @@ def proc_data():
         document_count =  Truck_Receiver_DB.count_documents(proc_query)
         return template.render(data=proc_documents, total=document_count, type=storage_selected )
     return template.render()
-
-
-@app.route('/proc_rev', methods=['POST', 'GET'])  # Reciving finished post
-def proc_rev():
-    template = jinja_env.get_template('proc_rev.html')
-    REV_documents = Processor_Review_DB.find()
-    if request.method == 'POST':
-        ID = request.form['ID']
-        STORAGE = request.form['STORAGE']
-        CONTENTS = request.form['CONTENTS']
-        DATE_RECEIVED = request.form['DATE_RECEIVED']
-        STORE_NUMBER = request.form['STORE_NUMBER']
-        MANIFEST_NUMBER = request.form['manifest_number_form']
-        PROBLEMS = request.form['problem_form']
-        DATE_PROSESSED = date_proc_format
-        PROCESSED_BY = request.form['processed_by']
-
-        try:
-            testing = request.form['test']
-        except:
-            testing = 'null'
-
-        post = {
-            '_id': random.random(),
-            'Storage_Type': STORAGE,
-            'Date_Received': date_proc_format,
-            'Date_Processed': DATE_PROSESSED,
-            'MANIFEST_NUMBER': MANIFEST_NUMBER,
-            'Store_Number': STORE_NUMBER,
-            'Contents': CONTENTS,
-            'Problems': PROBLEMS,
-            'Processed_By': PROCESSED_BY,
-        }
-        if request.form["test"] == 'Undo Processing':
-            proc_query = {"_id": float(ID)}
-            delete_one = Processor_Review_DB.delete_one(proc_query)
-            move = Truck_Receiver_DB.insert_one(post)
-            return template.render(data=REV_documents)
-        else:
-            proc_query = {"_id": float(ID)}
-            delete_one = Processor_Review_DB.delete_one(proc_query)
-            Finished_DB.insert_one(post)
-            return template.render(data=REV_documents)
-
-    return template.render(data=REV_documents)
 
 
 ######################################################################
@@ -281,7 +235,7 @@ def jewl_data():
                 'Seal_Number': SEAL_NUMBER,
 
             }
-            Jewelry_Review_DB.insert_one(New_Post)
+            Finished_Jewlery_DB.insert_one(New_Post)
             date_selected = DATE_RECEIVED
             cat_selected = CONTENTS
             store_selected = STORE_NUMBER
@@ -305,51 +259,7 @@ def jewl_data():
     return template.render()
 
 
-@app.route('/jewl_rev', methods=['POST', 'GET'])  # Reciving finished post
-def jewl_rev():
-    template = jinja_env.get_template('jewl_rev.html')
-    REV_documents = Jewelry_Review_DB.find()
-    if request.method == 'POST':
-        ID = request.form['ID']
-        STORAGE = request.form['STORAGE']
-        CONTENTS = request.form['CONTENTS']
-        DATE_RECEIVED = request.form['DATE_RECEIVED']
-        STORE_NUMBER = request.form['STORE_NUMBER']
-        MANIFEST_NUMBER = request.form['manifest_number_form']
-        PROBLEMS = request.form['problem_form']
-        DATE_PROSESSED = date_proc_format
-        PROCESSED_BY = request.form['processed_by']
-        SEAL_NUMBER = request.form['seal_number_form']
-        try:
-            testing = request.form['test']
-        except:
-            testing = 'null'
 
-        post = {
-            '_id': random.random(),
-            'Storage_Type': STORAGE,
-            'Date_Received': date_proc_format,
-            'Date_Processed': DATE_PROSESSED,
-            'MANIFEST_NUMBER': MANIFEST_NUMBER,
-            'Store_Number': STORE_NUMBER,
-            'Contents': CONTENTS,
-            'Problems': PROBLEMS,
-            'Processed_By': PROCESSED_BY,
-            'Seal_Number': SEAL_NUMBER,
-
-        }
-        if request.form["test"] == 'Undo Processing':
-            proc_query = {"_id": float(ID)}
-            delete_one = Jewelry_Review_DB.delete_one(proc_query)
-            Jewelry_DB.insert_one(post)
-            return template.render(data=REV_documents)
-        else:
-            proc_query = {"_id": float(ID)}
-            delete_one = Jewelry_Review_DB.delete_one(proc_query)
-            Finished_Jewlery_DB.insert_one(post)
-            return template.render(data=REV_documents)
-
-    return template.render(data=REV_documents)
 ############################################
 
 
@@ -389,7 +299,7 @@ def books_data():
                 'Problems': PROBLEMS,
                 'Processed_By': PROCESSED_BY,
             }
-            Book_Media_Review_DB.insert_one(New_Post)
+            Finished_DB.insert_one(New_Post)
             date_selected = DATE_RECEIVED
             cat_selected = CONTENTS
             store_selected = STORE_NUMBER
@@ -416,45 +326,7 @@ def books_data():
     return template.render()
 
 
-@app.route('/books_rev', methods=['POST', 'GET'])  # Reciving finished post
-def books_rev():
-    template = jinja_env.get_template('books_rev.html')
-    REV_documents = Book_Media_Review_DB.find()
-    if request.method == 'POST':
-        ID = request.form['ID']
-        STORAGE = request.form['STORAGE']
-        CONTENTS = request.form['CONTENTS']
-        DATE_RECEIVED = request.form['DATE_RECEIVED']
-        STORE_NUMBER = request.form['STORE_NUMBER']
-        MANIFEST_NUMBER = request.form['manifest_number_form']
-        PROBLEMS = request.form['problem_form']
-        DATE_PROSESSED = date_proc_format
-        PROCESSED_BY = request.form['processed_by']
 
-
-        post = {
-            '_id': random.random(),
-            'Storage_Type': STORAGE,
-            'Date_Received': date_proc_format,
-            'Date_Processed': DATE_PROSESSED,
-            'MANIFEST_NUMBER': MANIFEST_NUMBER,
-            'Store_Number': STORE_NUMBER,
-            'Contents': CONTENTS,
-            'Problems': PROBLEMS,
-            'Processed_By': PROCESSED_BY,
-        }
-        if request.form["test"] == 'Undo Processing':
-            proc_query = {"_id": float(ID)}
-            delete_one = Book_Media_Review_DB.delete_one(proc_query)
-            move = Truck_Receiver_DB.insert_one(post)
-            return template.render(data=REV_documents)
-        else:
-            proc_query = {"_id": float(ID)}
-            delete_one = Book_Media_Review_DB.delete_one(proc_query)
-            Finished_DB.insert_one(post)
-            return template.render(data=REV_documents)
-
-    return template.render(data=REV_documents)
 ##########################################################
 # Reciving finished post
 
@@ -523,29 +395,21 @@ def stats():
     total_jewlery_tote = Jewelry_DB.count_documents(
         {"Contents": "Jewelry", "Storage_Type": "Tote"})
     # Processed But not submitted
-    toat_review_books = Book_Media_Review_DB.count_documents(
-        {"Contents": "Books"})
-    toat_review_media = Book_Media_Review_DB.count_documents(
-        {"Contents": "Media"})
-    toat_review_jewlery = Jewelry_Review_DB.count_documents(
-        {"Contents": "Jewelry"})
-    toat_review_sgw = Processor_Review_DB.count_documents(
-        {"Contents": "Collectables"})
+
 
     Total_to_process_gay = total_books_gay + \
         total_media_gay + total_sgw_gay + total_jewlery_gay
     Total_to_process_tote = total_books_tote + \
         total_media_tote + total_sgw_tote + total_jewlery_tote
-    total_to_review = toat_review_books + toat_review_media + \
-        toat_review_jewlery + toat_review_sgw
+
     total_ready_for_logging = total_not_added_to_spreadsheet_books + total_not_added_to_spreadsheet_media + \
         total_not_added_to_spreadsheet_sgw + total_not_added_to_spreadsheet_jewlery
 
     template = jinja_env.get_template('count.html')
-    return template.render(tgtp=Total_to_process_gay, tttp=Total_to_process_tote, ttr=total_to_review, trfl=total_ready_for_logging, sgwTGTP=total_sgw_gay, sgwTTTP=total_sgw_tote, sgwTTR=toat_review_sgw, sgwTRFL=total_not_added_to_spreadsheet_sgw,
-                           jewlTGTP=total_jewlery_gay, jewlTTTP=total_jewlery_tote, jewlTTR=toat_review_jewlery, jewlTRFL=total_not_added_to_spreadsheet_jewlery,
-                           bookTGTP=total_books_gay, bookTTTP=total_books_tote, bookTTR=toat_review_books, bookTRFL=total_not_added_to_spreadsheet_books,
-                           medTGTP=total_media_gay, medTTTP=total_media_tote, medTTR=toat_review_media, medTRFL=total_not_added_to_spreadsheet_media)
+    return template.render(tgtp=Total_to_process_gay, tttp=Total_to_process_tote, trfl=total_ready_for_logging, sgwTGTP=total_sgw_gay, sgwTTTP=total_sgw_tote, sgwTRFL=total_not_added_to_spreadsheet_sgw,
+                           jewlTGTP=total_jewlery_gay, jewlTTTP=total_jewlery_tote, jewlTRFL=total_not_added_to_spreadsheet_jewlery,
+                           bookTGTP=total_books_gay, bookTTTP=total_books_tote, bookTRFL=total_not_added_to_spreadsheet_books,
+                           medTGTP=total_media_gay, medTTTP=total_media_tote, medTRFL=total_not_added_to_spreadsheet_media)
 
 
 if __name__ == '__main__':
