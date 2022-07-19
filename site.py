@@ -114,6 +114,8 @@ def rec():
             db_post(post=data_post, isJewlery=True, isBooks=False, isSGW=False)
         elif request.form['item_contents'] == 'Books':
             db_post(post=data_post, isJewlery=False, isBooks=True, isSGW=False)
+        elif request.form['item_contents'] == 'Media':
+            db_post(post=data_post, isJewlery=False, isBooks=True, isSGW=False)
         else:
             db_post(post=data_post, isJewlery=False, isBooks=False, isSGW=True)
 
