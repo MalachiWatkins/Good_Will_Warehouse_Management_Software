@@ -16,7 +16,7 @@ import random
 # for Gary: only Processed Info with issues
 # stores both processed and unprocessed
 
-warehouse_db = cluster["WAREHOUSE_MANAGEMENT_Test"]
+warehouse_db = cluster["WAREHOUSE_MANAGEMENT_Test"]  # GOODWILL
 Truck_Receiver_DB = warehouse_db["Truck_Receiver_DB"]
 
 Processor_Review_DB = warehouse_db["Processor_Review_DB"]
@@ -188,8 +188,8 @@ def proc_data():
                               'Storage_Type': storage_selected, }
 
         proc_documents = Truck_Receiver_DB.find(proc_query)
-        document_count =  Truck_Receiver_DB.count_documents(proc_query)
-        return template.render(data=proc_documents, total=document_count, type=storage_selected )
+        document_count = Truck_Receiver_DB.count_documents(proc_query)
+        return template.render(data=proc_documents, total=document_count, type=storage_selected)
     return template.render()
 
 
@@ -254,10 +254,9 @@ def jewl_data():
                 proc_query = {'Store_Number': store_selected}
 
         proc_documents = Jewelry_DB.find(proc_query)
-        document_count =  Jewelry_DB.count_documents(proc_query)
-        return template.render(data=proc_documents, total=document_count, type=storage_selected )
+        document_count = Jewelry_DB.count_documents(proc_query)
+        return template.render(data=proc_documents, total=document_count, type=storage_selected)
     return template.render()
-
 
 
 ############################################
@@ -321,10 +320,9 @@ def books_data():
                               'Storage_Type': storage_selected, }
 
         proc_documents = Books_Media_DB.find(proc_query)
-        document_count =  Books_Media_DB.count_documents(proc_query)
-        return template.render(data=proc_documents, total=document_count, type=storage_selected )
+        document_count = Books_Media_DB.count_documents(proc_query)
+        return template.render(data=proc_documents, total=document_count, type=storage_selected)
     return template.render()
-
 
 
 ##########################################################
@@ -368,7 +366,6 @@ def stats():
     sgw_query = {"Contents": "Collectables"}
     jewlery_query = {"Contents": "Jewelry"}
 
-
     total_not_added_to_spreadsheet_books = Finished_DB.count_documents({
         "Contents": "Books"})
     total_not_added_to_spreadsheet_media = Finished_DB.count_documents({
@@ -395,7 +392,6 @@ def stats():
     total_jewlery_tote = Jewelry_DB.count_documents(
         {"Contents": "Jewelry", "Storage_Type": "Tote"})
     # Processed But not submitted
-
 
     Total_to_process_gay = total_books_gay + \
         total_media_gay + total_sgw_gay + total_jewlery_gay

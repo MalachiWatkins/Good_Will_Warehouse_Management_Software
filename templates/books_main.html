@@ -19,13 +19,14 @@
       <div class="form-group" style="font-size:20px;color:white;padding-bottom:30px">
         <label for=""> Storage Type </label>
         <input type="hidden" name="summited" value="no"></input>
-        <select class="form-control" id="catigory search" name="storage_type_1">
-          <option>Please Select a Storage Type</option>
-          <option>Gaylord</option>
-          <option>Tote</option>
-          <option>Other</option>
+        <select class="custom-select" name="storage_type_1" required>
+          <option value="">Please Select a Storage Type</option>
+          <option value="Gaylord">Gaylord</option>
+          <option value="Tote">Tote</option>
+          <option value="Other">Other</option>
         </select>
       </div>
+
       <div class="form-group">
         <label for="" style="font-size:20px;color:white"> Store Number </label>
         <select class="form-control" id="catigory search" name="store_number">
